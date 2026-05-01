@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sosa — Product Design & Strategy</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-light: #F0EDE8;
+    --bg-dark: #12100E;
+    --bg-dark-card: #1E1B18;
+    --bg-mid: #E4E0DA;
+    --text-dark: #0E0E0C;
+    --text-body: #3D3A36;
+    --text-muted: #8A857E;
+    --text-light: #F0EDE8;
+    --text-light-muted: rgba(240,237,232,0.5);
+    --accent: #A89484;
+    --accent-hover: #B8A494;
+    --accent-subtle: rgba(168,148,132,0.12);
+    --border-light: rgba(14,14,12,0.1);
+    --border-dark: rgba(240,237,232,0.08);
+    --border-dark-hover: rgba(240,237,232,0.15);
+    --radius: 4px;
+    --max-w: 1080px;
+    --display: 'Fraunces', Georgia, serif;
+    --body: 'Geist', -apple-system, Helvetica, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-light);
+    color: var(--text-dark);
+    font-family: var(--body);
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: -0.3px;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 64px;
+  }
+
+  /* ===== NAV ===== */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(240,237,232,0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .nav-inner {
+    max-width: var(--max-w); margin: 0 auto; padding: 20px 64px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .nav-logo {
+    font-family: var(--display); font-size: 22px; font-weight: 400;
+    color: var(--text-dark); text-decoration: none;
+  }
+
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+
+  .nav-links a {
+    font-family: var(--body); font-size: 12px; font-weight: 500;
+    color: var(--text-muted); text-decoration: none;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    transition: color 0.3s ease;
+  }
+
+  .nav-links a:hover { color: var(--text-dark); }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 96px;
+    padding-top: 80px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .hero-eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 32px;
+    opacity: 0; animation: fadeUp 0.7s ease 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: var(--display);
+    font-size: clamp(48px, 5.5vw, 72px);
+    line-height: 1.05; letter-spacing: -0.03em;
+    font-weight: 400;
+    margin-bottom: 48px;
+    opacity: 0; animation: fadeUp 0.7s ease 0.4s forwards;
+  }
+
+  .hero-title em { font-style: italic; }
+
+  .hero-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 40px;
+    opacity: 0; animation: fadeUp 0.7s ease 0.6s forwards;
+  }
+
+  .hero-subtitle {
+    font-size: 17px; font-weight: 400; line-height: 1.7;
+    color: var(--text-body); max-width: 440px;
+  }
+
+  .hero-ctas {
+    display: flex; gap: 16px; align-items: center; flex-shrink: 0;
+  }
+
+  .btn-primary {
+    padding: 14px 32px; background: var(--text-dark); color: var(--text-light);
+    font-family: var(--body); font-size: 12px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none;
+    border: none; cursor: pointer; border-radius: var(--radius);
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary:hover { background: #2A2724; transform: translateY(-1px); }
+
+  .btn-ghost {
+    padding: 14px 0; background: none; color: var(--text-body);
+    font-family: var(--body); font-size: 12px; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none;
+    border: none; cursor: pointer; transition: color 0.3s ease;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .btn-ghost:hover { color: var(--text-dark); }
+  .btn-ghost .arrow { transition: transform 0.3s ease; }
+  .btn-ghost:hover .arrow { transform: translateX(4px); }
+
+  /* ===== WORK (dark) ===== */
+  .work-section {
+    background: var(--bg-dark);
+    color: var(--text-light);
+    padding: 120px 0;
+  }
+
+  .work-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 40px;
+    margin-bottom: 80px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border-dark);
+  }
+
+  .work-header h2 {
+    font-family: var(--body); font-size: clamp(28px, 3vw, 40px);
+    line-height: 1.15; letter-spacing: -0.02em; font-weight: 500;
+  }
+
+  .work-header p {
+    font-size: 15px; color: var(--text-light-muted); font-weight: 300;
+    line-height: 1.7; max-width: 360px; text-align: right;
+  }
+
+  .project-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    text-decoration: none; color: inherit;
+    border-top: 1px solid var(--border-dark);
+    transition: all 0.4s ease;
+    position: relative;
+  }
+
+  .project-card:last-child { border-bottom: 1px solid var(--border-dark); }
+
+  .project-card:hover { background: var(--bg-dark-card); }
+
+  .project-text {
+    padding: 56px 40px 56px 0;
+    display: flex; flex-direction: column;
+    justify-content: center; gap: 16px;
+  }
+
+  .project-eyebrow { display: flex; align-items: center; gap: 16px; }
+
+  .project-num {
+    font-family: var(--display); font-size: 14px;
+    color: var(--accent); font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .project-tags-row { display: flex; gap: 6px; }
+
+  .ptag {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 3px 10px;
+    border: 1px solid var(--border-dark); border-radius: var(--radius);
+    color: rgba(240,237,232,0.35);
+    transition: all 0.4s ease;
+  }
+
+  .project-card:hover .ptag {
+    border-color: var(--border-dark-hover);
+    color: rgba(240,237,232,0.5);
+  }
+
+  .project-title {
+    font-family: var(--display); font-size: clamp(26px, 2.5vw, 34px);
+    letter-spacing: -0.02em; font-weight: 400; line-height: 1.2;
+  }
+
+  .project-desc {
+    font-size: 15px; font-weight: 300;
+    color: var(--text-light-muted); line-height: 1.65;
+    max-width: 400px;
+  }
+
+  .project-cta {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: rgba(240,237,232,0.3);
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 8px; transition: all 0.4s ease;
+  }
+
+  .project-cta .cta-arrow { transition: transform 0.3s ease; }
+  .project-card:hover .project-cta { color: var(--accent); }
+  .project-card:hover .project-cta .cta-arrow { transform: translateX(6px); }
+
+  .project-image {
+    display: flex; align-items: center; justify-content: center; padding: 40px;
+  }
+
+  .project-image-frame {
+    width: 100%; aspect-ratio: 16/10;
+    background: var(--bg-dark-card);
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; transition: all 0.4s ease;
+  }
+
+  .project-card:hover .project-image-frame {
+    border-color: var(--border-dark-hover);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+    transform: translateY(-4px);
+  }
+
+  .project-image-frame span {
+    font-size: 12px; color: rgba(240,237,232,0.15);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  /* ===== BUILDS (light) ===== */
+  .builds-section {
+    padding: 120px 0;
+    background: var(--bg-light);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .builds-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 40px;
+    margin-bottom: 56px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .builds-header h2 {
+    font-family: var(--body); font-size: clamp(24px, 2.5vw, 32px);
+    line-height: 1.2; letter-spacing: -0.02em; font-weight: 500;
+  }
+
+  .builds-header p {
+    font-size: 15px; color: var(--text-muted); font-weight: 300;
+    line-height: 1.7; max-width: 340px; text-align: right;
+  }
+
+  .builds-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .build-card {
+    background: var(--bg-mid);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius); padding: 36px 32px;
+    transition: all 0.4s ease; cursor: pointer;
+    text-decoration: none; color: inherit;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+
+  .build-card:hover {
+    border-color: var(--text-muted);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(14,14,12,0.08);
+  }
+
+  .build-tools { display: flex; gap: 6px; }
+
+  .build-tool {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 4px 10px;
+    background: var(--accent-subtle); color: var(--accent);
+    border-radius: var(--radius);
+  }
+
+  .build-card h3 {
+    font-family: var(--display); font-size: 24px;
+    font-weight: 400; letter-spacing: -0.01em;
+  }
+
+  .build-card p { font-size: 14px; color: var(--text-body); font-weight: 300; line-height: 1.65; }
+
+  /* ===== ABOUT (dark) ===== */
+  .about-section {
+    padding: 120px 0;
+    background: var(--bg-dark);
+    color: var(--text-light);
+  }
+
+  .about-grid {
+    display: grid; grid-template-columns: 300px 1fr;
+    gap: 80px; align-items: start;
+  }
+
+  .about-photo {
+    width: 100%; aspect-ratio: 3/4;
+    background: var(--bg-dark-card); border-radius: var(--radius);
+    border: 1px solid var(--border-dark);
+    display: flex; align-items: center; justify-content: center;
+    position: sticky; top: 120px;
+  }
+
+  .about-photo span {
+    font-size: 12px; color: rgba(240,237,232,0.15);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  .about-eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 24px;
+  }
+
+  .about-text h2 {
+    font-family: var(--display); font-size: clamp(28px, 3vw, 40px);
+    line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 28px;
+    font-weight: 400;
+  }
+
+  .about-text h2 em { font-style: italic; }
+
+  .about-text p {
+    font-size: 16px; color: var(--text-light-muted); font-weight: 300;
+    line-height: 1.8; margin-bottom: 16px;
+  }
+
+  .about-attributes {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 28px; margin-top: 48px;
+  }
+
+  .attribute { border-top: 1px solid var(--border-dark); padding-top: 16px; }
+
+  .attribute h4 {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: rgba(240,237,232,0.3); margin-bottom: 8px;
+  }
+
+  .attribute p {
+    font-size: 15px; color: var(--text-light); font-weight: 400;
+    margin-bottom: 0; line-height: 1.5;
+  }
+
+  /* ===== FOOTER (light) ===== */
+  .footer-section {
+    padding: 96px 0;
+    background: var(--bg-light);
+    border-top: 1px solid var(--border-light);
+  }
+
+  .footer-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .footer-left h2 {
+    font-family: var(--display); font-size: clamp(36px, 5vw, 64px);
+    line-height: 1.05; letter-spacing: -0.03em; font-weight: 400;
+    margin-bottom: 32px;
+  }
+
+  .footer-left h2 em { font-style: italic; }
+
+  .footer-links { display: flex; gap: 24px; }
+
+  .footer-links a {
+    font-size: 12px; font-weight: 500; color: var(--text-muted);
+    text-decoration: none; letter-spacing: 0.08em; text-transform: uppercase;
+    transition: color 0.3s ease;
+    padding-bottom: 4px;
+    border-bottom: 1px solid transparent;
+  }
+
+  .footer-links a:hover {
+    color: var(--text-dark);
+    border-bottom-color: var(--text-dark);
+  }
+
+  .footer-right p { font-size: 12px; color: var(--text-muted); }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0; transform: translateY(28px);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .container, .nav-inner { padding-left: 28px; padding-right: 28px; }
+    .hero { min-height: auto; padding-top: 140px; padding-bottom: 60px; }
+    .hero-bottom { flex-direction: column; align-items: flex-start; gap: 32px; }
+    .work-header, .builds-header { flex-direction: column; align-items: flex-start; }
+    .work-header p, .builds-header p { text-align: left; }
+    .project-card { grid-template-columns: 1fr; }
+    .project-image { padding: 0 0 40px; }
+    .project-text { padding: 40px 0; }
+    .builds-grid { grid-template-columns: 1fr; }
+    .about-grid { grid-template-columns: 1fr; }
+    .about-photo { position: static; max-width: 260px; }
+    .footer-grid { flex-direction: column; align-items: flex-start; gap: 40px; }
+  }
+
+  @media (max-width: 600px) {
+    .hero-ctas { flex-direction: column; align-items: flex-start; }
+    .about-attributes { grid-template-columns: 1fr; }
+    .nav-links { gap: 16px; }
+    .nav-links a { font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">Sosa</a>
+    <ul class="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#builds">Builds</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">Product Design & Strategy</div>
+    <h1 class="hero-title">Complex systems,<br><em>clear products.</em></h1>
+    <div class="hero-bottom">
+      <p class="hero-subtitle">I work in fintech, logistics, and operations. The kind of spaces where things break if the design doesn't hold up. I lead the process from research to delivery.</p>
+      <div class="hero-ctas">
+        <a href="#work" class="btn-primary">Selected Work</a>
+        <a href="mailto:esosa@email.com" class="btn-ghost">Get in touch <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="work-section" id="work">
+  <div class="container">
+    <div class="work-header reveal">
+      <h2>Selected work</h2>
+      <p>These are projects where I had to make sense of messy, high stakes problems and turn them into something people could actually use and trust.</p>
+    </div>
+
+    <a class="project-card reveal" href="#">
+      <div class="project-text">
+        <div class="project-eyebrow">
+          <span class="project-num">01</span>
+          <div class="project-tags-row"><span class="ptag">B2B SaaS</span><span class="ptag">Fintech</span><span class="ptag">Strategy</span></div>
+        </div>
+        <h3 class="project-title">Flux</h3>
+        <p class="project-desc">A supply chain intelligence platform for African businesses. I led the pivot from inventory financing to a system that serves banks, merchants, and distributors.</p>
+        <div class="project-cta">Read case study <span class="cta-arrow">→</span></div>
+      </div>
+      <div class="project-image">
+        <div class="project-image-frame">
+          <span>Project cover image</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="project-card reveal" href="#">
+      <div class="project-text">
+        <div class="project-eyebrow">
+          <span class="project-num">02</span>
+          <div class="project-tags-row"><span class="ptag">Mobile</span><span class="ptag">B2C</span><span class="ptag">User Research</span></div>
+        </div>
+        <h3 class="project-title">Fitnest</h3>
+        <p class="project-desc">A mobile platform that makes it easier to find and stick to healthy meals. Born from a personal problem, validated with real users.</p>
+        <div class="project-cta">Read case study <span class="cta-arrow">→</span></div>
+      </div>
+      <div class="project-image">
+        <div class="project-image-frame">
+          <span>Project cover image</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="project-card reveal" href="#">
+      <div class="project-text">
+        <div class="project-eyebrow">
+          <span class="project-num">03</span>
+          <div class="project-tags-row"><span class="ptag">B2B SaaS</span><span class="ptag">Dashboard</span><span class="ptag">Logistics</span></div>
+        </div>
+        <h3 class="project-title">Logigo</h3>
+        <p class="project-desc">Dispatch management for small logistics companies and vendors. Research uncovered a second audience that reshaped the product.</p>
+        <div class="project-cta">Read case study <span class="cta-arrow">→</span></div>
+      </div>
+      <div class="project-image">
+        <div class="project-image-frame">
+          <span>Project cover image</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<section class="builds-section" id="builds">
+  <div class="container">
+    <div class="builds-header reveal">
+      <h2>Things I built</h2>
+      <p>I like to explore product ideas by actually building them. These are less about pixel perfection and more about how I think through problems.</p>
+    </div>
+    <div class="builds-grid">
+      <a class="build-card reveal" href="#">
+        <div class="build-tools"><span class="build-tool">Claude</span><span class="build-tool">Cursor</span></div>
+        <h3>Twine</h3>
+        <p>A conversation tool for couples who want to go deeper than "how was your day." Structured prompts that help partners actually connect.</p>
+      </a>
+      <a class="build-card reveal" href="#">
+        <div class="build-tools"><span class="build-tool">Webflow</span></div>
+        <h3>Chime</h3>
+        <p>Kids earn pocket money by completing chores. Simple idea, but it teaches them that money is earned, not given.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="about-section" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-photo reveal"><span>Your photo</span></div>
+      <div class="about-text reveal">
+        <div class="about-eyebrow">About</div>
+        <h2>I design for systems<br>that <em>earn trust</em></h2>
+        <p>I'm a Senior Product Designer. Most of my work lives in fintech, logistics, and operations. These are spaces where the systems are complex, the stakes are real, and you can't afford to get the fundamentals wrong.</p>
+        <p>I don't start with how things look. I start with how they work, who they're for, and what needs to be true for people to trust them. The visual layer comes after that foundation is solid.</p>
+        <div class="about-attributes">
+          <div class="attribute"><h4>Focus</h4><p>Fintech, Supply Chain, B2B SaaS, Operations</p></div>
+          <div class="attribute"><h4>Approach</h4><p>Systems thinking, user research, product strategy</p></div>
+          <div class="attribute"><h4>Tools</h4><p>Figma, Protopie, Miro, Claude, Cursor</p></div>
+          <div class="attribute"><h4>Status</h4><p>Open to mid to senior product design roles</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="footer-section" id="contact">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-left">
+        <h2>Have something<br><em>worth building?</em></h2>
+        <div class="footer-links">
+          <a href="mailto:esosa@email.com">Email</a>
+          <a href="#">LinkedIn</a>
+          <a href="#">Resume</a>
+          <a href="#">Twitter</a>
+        </div>
+      </div>
+      <div class="footer-right"><p>© 2026 Sosa</p></div>
+    </div>
+  </div>
+</section>
+
+<script>
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08 });
+reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

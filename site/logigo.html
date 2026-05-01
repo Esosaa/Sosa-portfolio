@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logigo — Case Study | Sosa</title>
+<style>
+  @font-face {
+    font-family: 'Fraunces';
+    src: url('fonts/Fraunces-VF.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Fraunces';
+    src: url('fonts/Fraunces-Italic-VF.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: italic;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('fonts/Geist-VF.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('fonts/Geist-Italic-VF.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: italic;
+    font-display: swap;
+  }
+
+  :root {
+    --bg-light: #F0EDE8;
+    --bg-dark: #12100E;
+    --bg-dark-card: #1E1B18;
+    --bg-mid: #E4E0DA;
+    --bg-warm: #E8E2D8;
+    --text-dark: #0E0E0C;
+    --text-body: #3D3A36;
+    --text-muted: #8A857E;
+    --text-light: #F0EDE8;
+    --text-light-muted: rgba(240,237,232,0.5);
+    --accent: #A89484;
+    --accent-subtle: rgba(168,148,132,0.12);
+    --border-light: rgba(14,14,12,0.1);
+    --border-dark: rgba(240,237,232,0.08);
+    --border-dark-hover: rgba(240,237,232,0.15);
+    --radius: 4px;
+    --max-w: 1080px;
+    --prose-w: 680px;
+    --display: 'Fraunces', Georgia, serif;
+    --body: 'Geist', -apple-system, Helvetica, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-light);
+    color: var(--text-dark);
+    font-family: var(--body);
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: -0.3px;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .cw { max-width: var(--max-w); margin: 0 auto; padding: 0 64px; }
+  .cw-prose { max-width: calc(var(--prose-w) + 128px); margin: 0 auto; padding: 0 64px; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(240,237,232,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .nav-inner {
+    max-width: var(--max-w); margin: 0 auto; padding: 20px 64px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .nav-logo {
+    font-family: var(--display); font-size: 22px; font-weight: 400;
+    color: var(--text-dark); text-decoration: none;
+  }
+
+  .nav-back {
+    font-size: 12px; font-weight: 500; color: var(--text-muted);
+    text-decoration: none; letter-spacing: 0.08em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px; transition: color 0.3s ease;
+  }
+
+  .nav-back:hover { color: var(--text-dark); }
+  .nav-back .arrow { transition: transform 0.3s ease; }
+  .nav-back:hover .arrow { transform: translateX(-4px); }
+
+  .eyebrow {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 24px;
+  }
+
+  .section-heading {
+    font-family: var(--body); font-size: clamp(20px, 2.2vw, 26px);
+    line-height: 1.3; letter-spacing: -0.02em; font-weight: 500;
+    margin-bottom: 20px;
+  }
+
+  .body-text {
+    font-size: 18px; font-weight: 400; color: var(--text-body);
+    line-height: 1.8; margin-bottom: 16px;
+  }
+
+  .body-text:last-child { margin-bottom: 0; }
+
+  /* ===== HERO — bold context opener ===== */
+  .cs-hero {
+    padding: 180px 0 80px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .cs-hero .eyebrow { opacity: 0; animation: fadeUp 0.7s ease 0.15s forwards; }
+
+  .cs-hero h1 {
+    font-family: var(--display); font-size: clamp(40px, 5vw, 60px);
+    line-height: 1.08; letter-spacing: -0.03em; font-weight: 400;
+    margin-bottom: 40px; max-width: 680px;
+    opacity: 0; animation: fadeUp 0.7s ease 0.3s forwards;
+  }
+
+  .cs-hero h1 em { font-style: italic; }
+
+  .hero-context {
+    font-family: var(--display); font-size: clamp(18px, 2vw, 22px);
+    font-weight: 400; font-style: italic; color: var(--text-body);
+    line-height: 1.5; max-width: 600px; margin-bottom: 48px;
+    opacity: 0; animation: fadeUp 0.7s ease 0.45s forwards;
+  }
+
+  .hero-tags {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    opacity: 0; animation: fadeUp 0.7s ease 0.6s forwards;
+  }
+
+  .hero-tag {
+    font-size: 12px; font-weight: 500; color: var(--text-muted);
+    letter-spacing: 0.06em;
+    padding: 8px 20px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+  }
+
+  /* ===== HERO IMAGE (dark) ===== */
+  .hero-img-section {
+    background: var(--bg-dark); padding: 80px 0;
+  }
+
+  .hero-img-frame {
+    background: var(--bg-dark-card);
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius);
+    aspect-ratio: 7/5;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+
+  .hero-img-frame img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hero-img-frame span {
+    font-size: 12px; color: rgba(240,237,232,0.12);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  /* ===== PROSE ===== */
+  .prose-section { padding: 88px 0 0; }
+  .prose-section + .prose-section { padding-top: 64px; }
+
+  .callout {
+    border-left: 2px solid var(--accent);
+    padding: 24px 28px;
+    background: var(--accent-subtle);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin: 32px 0;
+  }
+
+  .callout p {
+    font-size: 19px; font-weight: 400; color: var(--text-dark);
+    font-style: italic; line-height: 1.7; margin: 0;
+  }
+
+  /* ===== JOURNEY MAP placeholder (wide, warm band) ===== */
+  .journey-band {
+    background: var(--bg-warm);
+    padding: 64px 0;
+    margin-top: 64px;
+    border-top: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .journey-frame {
+    background: var(--bg-mid);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    height: 200px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .journey-frame span {
+    font-size: 12px; color: var(--text-muted); opacity: 0.4;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  /* ===== THE REVEAL — two audiences, dramatic split ===== */
+  .reveal-section {
+    background: var(--bg-dark);
+    color: var(--text-light);
+    padding: 96px 0;
+  }
+
+  .reveal-intro {
+    max-width: var(--prose-w);
+    margin-bottom: 64px;
+  }
+
+  .reveal-intro .section-heading { color: var(--text-light); }
+
+  .reveal-intro p {
+    font-size: 18px; font-weight: 400; color: var(--text-light-muted); line-height: 1.8;
+  }
+
+  .audience-split {
+    display: grid; grid-template-columns: 1fr 1px 1fr;
+    gap: 0;
+  }
+
+  .audience-col {
+    padding: 48px 40px;
+  }
+
+  .audience-divider {
+    background: var(--border-dark);
+    position: relative;
+  }
+
+  .audience-divider::after {
+    content: '&';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--display); font-size: 24px;
+    font-style: italic; color: var(--accent);
+    background: var(--bg-dark);
+    width: 48px; height: 48px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    border: 1px solid var(--border-dark);
+  }
+
+  .audience-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 20px; opacity: 0.8;
+  }
+
+  .audience-col h3 {
+    font-size: 20px; font-weight: 500; color: var(--text-light);
+    margin-bottom: 16px; letter-spacing: -0.01em;
+  }
+
+  .audience-col ul {
+    list-style: none; display: flex; flex-direction: column; gap: 10px;
+  }
+
+  .audience-col ul li {
+    font-size: 16px; color: var(--text-light-muted); font-weight: 400;
+    padding-left: 16px; position: relative; line-height: 1.55;
+  }
+
+  .audience-col ul li::before {
+    content: ''; position: absolute; left: 0; top: 8px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent); opacity: 0.6;
+  }
+
+  /* Shared pain points — center convergence */
+  .shared-band {
+    background: var(--bg-dark-card);
+    border-top: 1px solid var(--border-dark);
+    padding: 48px 0;
+  }
+
+  .shared-inner {
+    text-align: center;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .shared-inner h3 {
+    font-size: 13px; font-weight: 600; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  .shared-tags {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    justify-content: center;
+  }
+
+  .shared-tag {
+    font-size: 13px; font-weight: 400; color: var(--text-light);
+    padding: 10px 24px;
+    border: 1px solid var(--border-dark-hover);
+    border-radius: var(--radius);
+    background: rgba(240,237,232,0.03);
+  }
+
+  /* ===== SOLUTION (light) ===== */
+  .solution-section { padding: 88px 0 80px; }
+
+  /* ===== PLATFORM SCREENS (dark) — stacked full-width ===== */
+  .platform-section {
+    background: var(--bg-dark); color: var(--text-light);
+    padding: 96px 0;
+  }
+
+  .platform-intro {
+    max-width: var(--prose-w); margin-bottom: 64px;
+  }
+
+  .platform-intro .section-heading {
+    color: var(--text-light);
+    font-size: clamp(21px, 2.3vw, 27px);
+  }
+  .platform-intro p { font-size: 18px; font-weight: 400; color: var(--text-light-muted); line-height: 1.7; }
+
+  .platform-screen {
+    margin-bottom: 56px;
+  }
+
+  .platform-screen:last-child { margin-bottom: 0; }
+
+  .platform-screen-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 24px; gap: 40px;
+  }
+
+  .platform-screen-text { max-width: 420px; }
+
+  .platform-screen-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 8px; opacity: 0.8;
+  }
+
+  .platform-screen-title {
+    font-size: 21px; font-weight: 500; color: var(--text-light);
+    margin-bottom: 8px; letter-spacing: -0.01em;
+  }
+
+  .platform-screen-desc {
+    font-size: 16px; color: var(--text-light-muted); font-weight: 400;
+    line-height: 1.6;
+  }
+
+  .platform-screen-num {
+    font-family: var(--display); font-size: 80px;
+    font-weight: 300; color: var(--text-light);
+    opacity: 0.04; line-height: 1; letter-spacing: -0.04em;
+  }
+
+  .platform-frame {
+    background: var(--bg-dark-card);
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius);
+    aspect-ratio: 4/3;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+
+  .platform-frame img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .platform-frame span {
+    font-size: 12px; color: rgba(240,237,232,0.1);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  /* ===== MOBILE — centered phone ===== */
+  .mobile-section {
+    background: var(--bg-warm);
+    padding: 96px 0;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .mobile-grid {
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 64px; align-items: center;
+  }
+
+  .mobile-text .section-heading { color: var(--text-dark); }
+
+  .mobile-text p {
+    font-size: 18px; color: var(--text-body); font-weight: 400;
+    line-height: 1.8; margin-bottom: 16px;
+  }
+
+  .mobile-phone {
+    width: 260px; height: 520px;
+    background: var(--bg-mid);
+    border: 1px solid var(--border-light);
+    border-radius: 32px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 24px 64px rgba(14,14,12,0.08);
+    overflow: hidden;
+  }
+
+  .mobile-phone img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .mobile-phone span {
+    font-size: 12px; color: var(--text-muted); opacity: 0.4;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  /* ===== REFLECTIONS (light — different from other pages) ===== */
+  .reflections {
+    padding: 96px 0;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .reflections blockquote {
+    font-family: var(--display); font-size: clamp(22px, 2.5vw, 30px);
+    font-weight: 400; font-style: italic; color: var(--text-dark);
+    line-height: 1.4; margin: 36px 0; padding-left: 24px;
+    border-left: 2px solid var(--accent);
+  }
+
+  /* ===== NEXT ===== */
+  .cs-next {
+    padding: 64px 0;
+    background: var(--bg-dark); color: var(--text-light);
+  }
+
+  .cs-next-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px;
+  }
+
+  .cs-next-link {
+    text-decoration: none; color: inherit;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 28px 0;
+    border-top: 1px solid var(--border-dark);
+    border-bottom: 1px solid var(--border-dark);
+    transition: all 0.3s ease;
+  }
+
+  .cs-next-link:hover { padding-left: 12px; }
+
+  .cs-next-title {
+    font-family: var(--display); font-size: clamp(24px, 3vw, 40px);
+    letter-spacing: -0.02em; font-weight: 400; transition: color 0.3s ease;
+  }
+
+  .cs-next-link:hover .cs-next-title { color: var(--accent); }
+  .cs-next-arrow { font-size: 24px; color: var(--text-muted); transition: all 0.3s ease; }
+  .cs-next-link:hover .cs-next-arrow { color: var(--accent); transform: translateX(8px); }
+
+  footer {
+    border-top: 1px solid var(--border-dark);
+    background: var(--bg-dark); padding: 48px 0;
+  }
+
+  .footer-inner { display: flex; justify-content: space-between; align-items: center; }
+  footer a { font-family: var(--display); font-size: 18px; color: var(--text-light); text-decoration: none; }
+  footer p { font-size: 12px; color: rgba(240,237,232,0.3); }
+
+  /* ===== ARTIFACT (process screenshots) ===== */
+  .artifact-card {
+    background: var(--bg-dark-card);
+    border: 1px solid var(--border-dark);
+    border-radius: 8px;
+    padding: 40px;
+  }
+
+  .artifact-card.light {
+    background: var(--bg-mid);
+    border-color: var(--border-light);
+  }
+
+  .artifact-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 4px;
+  }
+
+  .artifact-placeholder {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 4px;
+    background: rgba(240, 237, 232, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(240, 237, 232, 0.25);
+    text-align: center;
+    padding: 0 24px;
+  }
+
+  .artifact-card.light .artifact-placeholder {
+    background: rgba(14, 14, 12, 0.04);
+    color: var(--text-muted);
+  }
+
+  .artifact-caption {
+    font-size: 12px;
+    color: rgba(240, 237, 232, 0.5);
+    text-align: center;
+    margin-top: 16px;
+    line-height: 1.5;
+  }
+
+  .artifact-card.light .artifact-caption {
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 700px) {
+    .artifact-card { padding: 24px; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0; transform: translateY(28px);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    .cw, .cw-prose, .nav-inner { padding-left: 28px; padding-right: 28px; }
+    .audience-split { grid-template-columns: 1fr; }
+    .audience-divider { height: 1px; width: 100%; }
+    .audience-divider::after { top: auto; bottom: -24px; }
+    .audience-col { padding: 32px 0; }
+    .platform-screen-header { flex-direction: column; align-items: flex-start; }
+    .platform-screen-num { display: none; }
+    .mobile-grid { grid-template-columns: 1fr; }
+    .mobile-phone { width: 220px; height: 440px; margin: 0 auto; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="index.html">Sosa</a>
+    <a class="nav-back" href="index.html"><span class="arrow">←</span> All Projects</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="cs-hero">
+  <div class="cw">
+    <div class="eyebrow">Case Study 03</div>
+    <h1>Dispatch management for <em>the little guys</em></h1>
+    <p class="hero-context">We built this for small logistics companies. Halfway through research, we found a second audience that changed the entire product.</p>
+    <div class="hero-tags">
+      <span class="hero-tag">Product Designer</span>
+      <span class="hero-tag">Web + Mobile</span>
+      <span class="hero-tag">Dashboard</span>
+      <span class="hero-tag">Ongoing</span>
+    </div>
+  </div>
+</section>
+
+<!-- HERO IMAGE -->
+<section class="hero-img-section">
+  <div class="cw">
+    <div class="hero-img-frame reveal"><img src="logigo-images/hero.png" alt="Logigo dashboard"></div>
+  </div>
+</section>
+
+<!-- BACKSTORY -->
+<section class="prose-section">
+  <div class="cw-prose">
+    <div class="reveal">
+      <h2 class="section-heading">The backstory</h2>
+      <p class="body-text">Behind every seamless delivery, there's a logistics company working to make it happen on time. The big players have systems for this. But small and mid-sized companies are still running on spreadsheets, paper notes, and WhatsApp messages.</p>
+      <p class="body-text">The premise behind Logigo was straightforward. Help these businesses keep tabs on deliveries, manage customer relations, and serve their customers better. But we needed to make sure this was a real problem, not just an assumption.</p>
+    </div>
+  </div>
+</section>
+
+<!-- RESEARCH -->
+<section class="prose-section">
+  <div class="cw-prose">
+    <div class="reveal">
+      <h2 class="section-heading">Talking to the people doing the work</h2>
+      <p class="body-text">I started by speaking to small logistics companies to understand how they operate day to day. Not the pitch version of their problems, but the real ones. Where do things actually break down?</p>
+      <div class="callout">
+        <p>It's important to make sure the problems you're solving are ones people actually want fixed, not just ones they've learned to live with.</p>
+      </div>
+      <p class="body-text">I mapped the journey from order placement through delivery and post-delivery. The same friction points surfaced in every conversation: missed orders, unreliable riders, no central record of deliveries, and difficulty keeping customers informed.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ARTIFACT 1: Customer journey map -->
+<section class="journey-band">
+  <div class="cw">
+    <div class="artifact-card light reveal">
+      <img class="artifact-img" src="logigo-images/logigo-journey-map.png" alt="Customer journey map">
+      <p class="artifact-caption">Mapping the full journey from order placement to delivery and post-delivery tracking</p>
+    </div>
+  </div>
+</section>
+
+<!-- THE REVEAL — two audiences -->
+<section class="reveal-section">
+  <div class="cw">
+    <div class="reveal-intro reveal">
+      <h2 class="section-heading">Then we found the second audience</h2>
+      <p>While interviewing logistics companies, we noticed something we hadn't expected. Vendors selling physical products were dealing with almost the same problems. They needed to track orders, manage inventory, and keep customers happy. They just approached it from a different angle.</p>
+    </div>
+
+    <div class="audience-split reveal">
+      <div class="audience-col">
+        <div class="audience-label">Audience 01</div>
+        <h3>Logistics companies</h3>
+        <ul>
+          <li>Missed orders from customers</li>
+          <li>Rider reliability and tracking issues</li>
+          <li>Manual process of documenting orders on paper</li>
+          <li>Dispatch complaints with no way to verify</li>
+        </ul>
+      </div>
+      <div class="audience-divider"></div>
+      <div class="audience-col">
+        <div class="audience-label">Audience 02</div>
+        <h3>Vendors</h3>
+        <ul>
+          <li>Rider reliability when outsourcing delivery</li>
+          <li>Inventory tracking on paper or notes apps</li>
+          <li>Manual process for receiving and managing orders</li>
+          <li>Finding reliable logistics partners nearby</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="shared-band">
+    <div class="cw">
+      <div class="shared-inner reveal">
+        <h3>Where both audiences overlap</h3>
+        <div class="shared-tags">
+          <span class="shared-tag">Customer relations</span>
+          <span class="shared-tag">Record keeping</span>
+          <span class="shared-tag">Dispatch reliability</span>
+          <span class="shared-tag">Order tracking</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section class="solution-section">
+  <div class="cw-prose">
+    <div class="reveal">
+      <h2 class="section-heading">Figuring out what to build</h2>
+      <p class="body-text">After synthesizing everything, we landed on three possible directions: a dashboard for logistics companies, an online resource to help vendors find delivery partners, and a mobile app for vendors. The dashboard was the clearest starting point because it addressed the most urgent problems for both audiences.</p>
+    </div>
+  </div>
+  <!-- ARTIFACT 2: Proposed solutions diagram -->
+  <div class="cw" style="margin-top: 48px;">
+    <div class="artifact-card light reveal">
+      <img class="artifact-img" src="logigo-images/logigo-proposed-solutions.png" alt="Proposed solutions diagram">
+      <p class="artifact-caption">Mapping pain points from both audiences to see where a single product could serve them both</p>
+    </div>
+  </div>
+</section>
+
+<!-- PLATFORM SCREENS -->
+<section class="platform-section">
+  <div class="cw">
+    <div class="platform-intro reveal">
+      <h2 class="section-heading">The platform</h2>
+      <p>A dashboard for managing deliveries, tracking riders, and keeping operations visible across both logistics companies and vendors.</p>
+    </div>
+
+    <div class="platform-screen reveal">
+      <div class="platform-screen-header">
+        <div class="platform-screen-text">
+          <div class="platform-screen-label">.01</div>
+          <div class="platform-screen-title">Dashboard overview</div>
+          <div class="platform-screen-desc">Pending deliveries, rider status, order history, and key metrics. Everything a logistics company needs to see at a glance.</div>
+        </div>
+        <div class="platform-screen-num">01</div>
+      </div>
+      <div class="platform-frame"><img src="logigo-images/dashboard.png" alt="Dashboard overview"></div>
+    </div>
+
+    <div class="platform-screen reveal">
+      <div class="platform-screen-header">
+        <div class="platform-screen-text">
+          <div class="platform-screen-label">.02</div>
+          <div class="platform-screen-title">Dispatch center</div>
+          <div class="platform-screen-desc">Where orders get assigned to riders, tracked in real time, and marked as complete. The core of daily operations.</div>
+        </div>
+        <div class="platform-screen-num">02</div>
+      </div>
+      <div class="platform-frame"><img src="logigo-images/dispatch.png" alt="Dispatch center"></div>
+    </div>
+
+    <div class="platform-screen reveal">
+      <div class="platform-screen-header">
+        <div class="platform-screen-text">
+          <div class="platform-screen-label">.03</div>
+          <div class="platform-screen-title">Suppliers and orders</div>
+          <div class="platform-screen-desc">Managing vendor relationships, incoming orders, and delivery scheduling from one view.</div>
+        </div>
+        <div class="platform-screen-num">03</div>
+      </div>
+      <div class="platform-frame"><img src="logigo-images/suppliers.png" alt="Suppliers and orders"></div>
+    </div>
+
+    <div class="platform-screen reveal">
+      <div class="platform-screen-header">
+        <div class="platform-screen-text">
+          <div class="platform-screen-label">.04</div>
+          <div class="platform-screen-title">WhatsApp integration</div>
+          <div class="platform-screen-desc">Most of these businesses already use WhatsApp for customer communication. Logigo connects to their WhatsApp Business account so they don't have to change how they receive orders.</div>
+        </div>
+        <div class="platform-screen-num">04</div>
+      </div>
+      <div class="platform-frame"><img src="logigo-images/whatsapp.png" alt="WhatsApp integration"></div>
+    </div>
+  </div>
+</section>
+
+<!-- MOBILE -->
+<section class="mobile-section">
+  <div class="cw">
+    <div class="mobile-grid reveal">
+      <div class="mobile-text">
+        <div class="eyebrow">Mobile</div>
+        <h2 class="section-heading">Vendor app</h2>
+        <p>Based on research, most vendors work from their phones. They don't sit at a desk. The mobile version gives them access to orders, dispatch requests, and delivery tracking without needing a laptop.</p>
+        <p>The interface is stripped down to what matters. No feature bloat. Just the things a vendor actually needs while they're working.</p>
+      </div>
+      <div class="mobile-phone"><img src="logigo-images/vendor-app.png" alt="Vendor mobile app"></div>
+    </div>
+  </div>
+</section>
+
+<!-- REFLECTIONS (light — unique to this page) -->
+<section class="reflections">
+  <div class="cw-prose">
+    <div class="reveal">
+      <div class="eyebrow">Reflections</div>
+      <h2 class="section-heading">What this project taught me</h2>
+
+      <blockquote>The people you think you're building for aren't always the only ones who need it.</blockquote>
+
+      <p class="body-text">We went in thinking we were solving a logistics problem. We came out building for an entire ecosystem. That wasn't the plan, but the research made it unavoidable.</p>
+      <p class="body-text">The other thing that stuck with me is simpler. Build for how people actually work, not how you think they should. These businesses run on WhatsApp and phone calls. Instead of asking them to adopt something new, we designed around the tools they were already using. That decision shaped everything.</p>
+    </div>
+  </div>
+</section>
+
+<!-- NEXT -->
+<section class="cs-next">
+  <div class="cw">
+    <div class="cs-next-label">Next Project</div>
+    <a class="cs-next-link" href="flux.html">
+      <span class="cs-next-title">Flux</span>
+      <span class="cs-next-arrow">→</span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="cw">
+    <div class="footer-inner">
+      <a href="index.html">Sosa</a>
+      <p>© 2026 Sosa</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
+  });
+}, { threshold: 0.08 });
+reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

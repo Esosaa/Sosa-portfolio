@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fitnest — Case Study | Sosa</title>
+<style>
+  @font-face {
+    font-family: 'Fraunces';
+    src: url('fonts/Fraunces-VF.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Fraunces';
+    src: url('fonts/Fraunces-Italic-VF.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: italic;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('fonts/Geist-VF.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('fonts/Geist-Italic-VF.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: italic;
+    font-display: swap;
+  }
+
+  :root {
+    --bg-light: #F0EDE8;
+    --bg-dark: #12100E;
+    --bg-dark-card: #1E1B18;
+    --bg-mid: #E4E0DA;
+    --bg-warm: #E8E2D8;
+    --text-dark: #0E0E0C;
+    --text-body: #3D3A36;
+    --text-muted: #8A857E;
+    --text-light: #F0EDE8;
+    --text-light-muted: rgba(240,237,232,0.5);
+    --accent: #A89484;
+    --accent-subtle: rgba(168,148,132,0.12);
+    --border-light: rgba(14,14,12,0.1);
+    --border-dark: rgba(240,237,232,0.08);
+    --radius: 4px;
+    --max-w: 1080px;
+    --prose-w: 680px;
+    --display: 'Fraunces', Georgia, serif;
+    --body: 'Geist', -apple-system, Helvetica, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-light);
+    color: var(--text-dark);
+    font-family: var(--body);
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: -0.3px;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .cw { max-width: var(--max-w); margin: 0 auto; padding: 0 64px; }
+  .cw-prose { max-width: calc(var(--prose-w) + 128px); margin: 0 auto; padding: 0 64px; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(240,237,232,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .nav-inner {
+    max-width: var(--max-w); margin: 0 auto; padding: 20px 64px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .nav-logo {
+    font-family: var(--display); font-size: 22px; font-weight: 400;
+    color: var(--text-dark); text-decoration: none;
+  }
+
+  .nav-back {
+    font-size: 12px; font-weight: 500; color: var(--text-muted);
+    text-decoration: none; letter-spacing: 0.08em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px; transition: color 0.3s ease;
+  }
+
+  .nav-back:hover { color: var(--text-dark); }
+  .nav-back .arrow { transition: transform 0.3s ease; }
+  .nav-back:hover .arrow { transform: translateX(-4px); }
+
+  .eyebrow {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 24px;
+  }
+
+  .section-heading {
+    font-family: var(--body); font-size: clamp(20px, 2.2vw, 26px);
+    line-height: 1.3; letter-spacing: -0.02em; font-weight: 500;
+    margin-bottom: 20px;
+  }
+
+  .body-text {
+    font-size: 17px; font-weight: 400; color: var(--text-body);
+    line-height: 1.8; margin-bottom: 16px;
+  }
+
+  .body-text:last-child { margin-bottom: 0; }
+
+  /* ===== HERO — more personal, story-driven ===== */
+  .cs-hero {
+    padding: 180px 0 0;
+  }
+
+  .cs-hero .eyebrow { opacity: 0; animation: fadeUp 0.7s ease 0.15s forwards; }
+
+  .cs-hero h1 {
+    font-family: var(--display); font-size: clamp(40px, 5vw, 60px);
+    line-height: 1.08; letter-spacing: -0.03em; font-weight: 400;
+    margin-bottom: 40px; max-width: 600px;
+    opacity: 0; animation: fadeUp 0.7s ease 0.3s forwards;
+  }
+
+  .cs-hero h1 em { font-style: italic; }
+
+  .hero-story {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 48px; align-items: start;
+    padding: 48px 0 0;
+    border-top: 1px solid var(--border-light);
+    opacity: 0; animation: fadeUp 0.7s ease 0.5s forwards;
+  }
+
+  .hero-story p {
+    font-size: 18px; font-weight: 400; color: var(--text-body);
+    line-height: 1.75;
+  }
+
+  .hero-meta-col {
+    display: flex; flex-direction: column; gap: 24px;
+    padding-top: 4px;
+  }
+
+  .hero-meta-pair h4 {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
+  }
+
+  .hero-meta-pair p {
+    font-size: 15px; color: var(--text-dark); font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* Hero image — warm background band */
+  .hero-img-band {
+    background: var(--bg-warm);
+    margin-top: 80px;
+  }
+
+  .hero-img-band img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* ===== PROSE ===== */
+  .prose-section { padding: 88px 0 0; }
+  .prose-section + .prose-section { padding-top: 64px; }
+
+  /* ===== FINDINGS — numbered cards, staggered grid ===== */
+  .findings-section {
+    padding: 88px 0;
+  }
+
+  .findings-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px; margin-top: 36px;
+  }
+
+  .finding-card {
+    padding: 32px 28px;
+    background: var(--bg-mid);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    display: flex; flex-direction: column; gap: 12px;
+  }
+
+  .finding-card:nth-child(2) { margin-top: 32px; }
+  .finding-card:nth-child(4) { margin-top: 32px; }
+
+  .finding-num {
+    font-family: var(--display); font-size: 32px;
+    color: var(--accent); opacity: 0.4; font-weight: 300;
+    line-height: 1; letter-spacing: -0.03em;
+  }
+
+  .finding-card h3 {
+    font-size: 16px; font-weight: 600; color: var(--text-dark);
+    line-height: 1.4; letter-spacing: -0.01em;
+  }
+
+  .finding-card p {
+    font-size: 15px; color: var(--text-body); font-weight: 400;
+    line-height: 1.6; margin: 0;
+  }
+
+  /* ===== INSIGHT BAND ===== */
+  .insight-band {
+    background: var(--bg-dark); color: var(--text-light);
+    padding: 64px 0;
+  }
+
+  .insight-band-inner {
+    max-width: var(--prose-w);
+  }
+
+  .insight-band p {
+    font-family: var(--display); font-size: clamp(20px, 2.5vw, 28px);
+    font-weight: 400; font-style: italic; line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+
+  .insight-band .source {
+    font-family: var(--body); font-size: 14px; font-weight: 400;
+    color: var(--text-light-muted); margin-top: 16px;
+    font-style: normal;
+  }
+
+  /* ===== DESIGN GALLERY — grid of screens ===== */
+  /* ===== DESIGN GALLERY — phone mockup compositions ===== */
+  .design-section {
+    background: var(--bg-dark); color: var(--text-light);
+    padding: 96px 0;
+  }
+
+  .design-intro {
+    max-width: var(--prose-w);
+    margin-bottom: 96px;
+  }
+
+  .design-intro .section-heading { color: var(--text-light); }
+
+  .design-intro p {
+    font-size: 17px; font-weight: 400; color: var(--text-light-muted);
+    line-height: 1.7;
+  }
+
+  .design-feature { margin-top: 120px; }
+  .design-feature:first-of-type { margin-top: 0; }
+
+  .df-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .df-stack-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+  }
+
+  /* Text variants */
+  .df-text { max-width: 340px; }
+  .df-text-center { max-width: 480px; text-align: center; }
+  .df-text-right { max-width: 340px; text-align: right; margin-left: auto; }
+
+  .df-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 12px; opacity: 0.8;
+  }
+
+  .df-title {
+    font-family: var(--body);
+    font-size: clamp(19px, 2.1vw, 25px);
+    font-weight: 500;
+    color: var(--text-light);
+    margin-bottom: 12px; letter-spacing: -0.01em;
+  }
+
+  .df-desc {
+    font-size: 17px; color: var(--text-light-muted); font-weight: 400;
+    line-height: 1.65;
+  }
+
+  /* Phone group + per-feature stagger */
+  .df-phones {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+  }
+
+  .df-phones-stagger > .phone:nth-child(2) {
+    transform: translateY(calc(var(--phone-stagger, 20px) * -1));
+  }
+
+  .df-phones-stagger-rev > .phone:nth-child(1) {
+    transform: translateY(var(--phone-stagger, 16px));
+  }
+
+  .df-phones-overlap {
+    gap: 0;
+    position: relative;
+  }
+
+  .df-phones-overlap > .phone:nth-child(1) {
+    transform: translate(20px, 20px) rotate(-4deg);
+  }
+
+  .df-phones-overlap > .phone:nth-child(2) {
+    transform: translate(-20px, -10px);
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Phone device */
+  .phone {
+    position: relative;
+    width: 220px;
+    height: 440px;
+    border-radius: 28px;
+    background: #fff;
+    border: 1px solid rgba(240, 237, 232, 0.1);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .phone img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .phone-placeholder {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.25);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 0 12px;
+  }
+
+  /* Feature 04 — full-width warm band (separate <section>) */
+  .design-feature-4 {
+    background: var(--bg-warm);
+    color: var(--text-dark);
+    padding: 120px 0;
+    margin-top: 0;
+  }
+
+  .design-feature-4 .df-title { color: var(--text-dark); }
+  .design-feature-4 .df-desc { color: var(--text-body); }
+
+  .design-feature-4 .phone {
+    border: 1px solid rgba(14, 14, 12, 0.1);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+  }
+
+  /* ===== TESTING — horizontal strip ===== */
+  .testing-section { padding: 88px 0; }
+
+  .testing-strip {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 2px; margin-top: 32px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius); overflow: hidden;
+  }
+
+  .testing-item {
+    padding: 32px 28px; background: var(--bg-mid);
+    display: flex; flex-direction: column; gap: 12px;
+  }
+
+  .testing-num {
+    font-family: var(--display); font-size: 36px;
+    color: var(--accent); opacity: 0.35; font-weight: 300;
+    line-height: 1;
+  }
+
+  .testing-item p {
+    font-size: 15px; color: var(--text-body); font-weight: 400;
+    line-height: 1.6; margin: 0;
+  }
+
+  /* ===== WEBSITE SECTION ===== */
+  .website-section {
+    background: var(--bg-warm);
+    padding: 80px 0;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .website-frame {
+    background: var(--bg-mid);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    aspect-ratio: 11/10;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+
+  .website-frame img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .website-frame span {
+    font-size: 12px; color: var(--text-muted); opacity: 0.4;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  /* ===== REFLECTIONS ===== */
+  .reflections {
+    padding: 96px 0;
+    background: var(--bg-dark); color: var(--text-light);
+  }
+
+  .reflections .section-heading { color: var(--text-light); }
+  .reflections .body-text { color: var(--text-light-muted); }
+
+  .reflections blockquote {
+    font-family: var(--display); font-size: clamp(22px, 2.5vw, 30px);
+    font-weight: 400; font-style: italic; color: var(--text-light);
+    line-height: 1.4; margin: 36px 0; padding-left: 24px;
+    border-left: 2px solid var(--accent);
+  }
+
+  /* ===== NEXT ===== */
+  .cs-next {
+    padding: 64px 0; border-top: 1px solid var(--border-light);
+    background: var(--bg-mid);
+  }
+
+  .cs-next-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px;
+  }
+
+  .cs-next-link {
+    text-decoration: none; color: inherit;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 28px 0;
+    border-top: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+    transition: all 0.3s ease;
+  }
+
+  .cs-next-link:hover { padding-left: 12px; }
+
+  .cs-next-title {
+    font-family: var(--display); font-size: clamp(24px, 3vw, 40px);
+    letter-spacing: -0.02em; font-weight: 400; transition: color 0.3s ease;
+  }
+
+  .cs-next-link:hover .cs-next-title { color: var(--accent); }
+  .cs-next-arrow { font-size: 24px; color: var(--text-muted); transition: all 0.3s ease; }
+  .cs-next-link:hover .cs-next-arrow { color: var(--accent); transform: translateX(8px); }
+
+  footer {
+    border-top: 1px solid var(--border-light);
+    background: var(--bg-light); padding: 48px 0;
+  }
+
+  .footer-inner { display: flex; justify-content: space-between; align-items: center; }
+  footer a { font-family: var(--display); font-size: 18px; color: var(--text-dark); text-decoration: none; }
+  footer p { font-size: 12px; color: var(--text-muted); }
+
+  /* ===== ARTIFACT (process screenshots) ===== */
+  .artifact-card {
+    background: var(--bg-dark-card);
+    border: 1px solid var(--border-dark);
+    border-radius: 8px;
+    padding: 40px;
+  }
+
+  .artifact-card.light {
+    background: var(--bg-mid);
+    border-color: var(--border-light);
+  }
+
+  .artifact-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 4px;
+  }
+
+  .artifact-placeholder {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 4px;
+    background: rgba(240, 237, 232, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(240, 237, 232, 0.25);
+    text-align: center;
+    padding: 0 24px;
+  }
+
+  .artifact-card.light .artifact-placeholder {
+    background: rgba(14, 14, 12, 0.04);
+    color: var(--text-muted);
+  }
+
+  .artifact-caption {
+    font-size: 12px;
+    color: rgba(240, 237, 232, 0.5);
+    text-align: center;
+    margin-top: 16px;
+    line-height: 1.5;
+  }
+
+  .artifact-card.light .artifact-caption {
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 700px) {
+    .artifact-card { padding: 24px; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0; transform: translateY(28px);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    .cw, .cw-prose, .nav-inner { padding-left: 28px; padding-right: 28px; }
+    .hero-story { grid-template-columns: 1fr; gap: 32px; }
+    .findings-grid { grid-template-columns: 1fr; }
+    .finding-card:nth-child(2), .finding-card:nth-child(4) { margin-top: 0; }
+    .design-feature { margin-top: 96px; }
+    .design-feature-4 { padding: 96px 0; }
+    .df-grid { grid-template-columns: 1fr; gap: 40px; }
+    .df-text, .df-text-right, .df-text-center {
+      max-width: 100%; text-align: left;
+      margin-left: 0; margin-right: 0;
+    }
+    .testing-strip { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 700px) {
+    .phone { width: 180px; height: 360px; }
+    .df-phones { gap: 16px; }
+    .df-phones-overlap > .phone:nth-child(1) {
+      transform: translate(12px, 16px) rotate(-4deg);
+    }
+    .df-phones-overlap > .phone:nth-child(2) {
+      transform: translate(-12px, -8px);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .df-phones { flex-direction: column; align-items: center; gap: 24px; }
+    .df-phones-stagger > .phone:nth-child(2),
+    .df-phones-stagger-rev > .phone:nth-child(1),
+    .df-phones-overlap > .phone:nth-child(1),
+    .df-phones-overlap > .phone:nth-child(2) {
+      transform: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="index.html">Sosa</a>
+    <a class="nav-back" href="index.html"><span class="arrow">←</span> All Projects</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="cs-hero">
+  <div class="cw">
+    <div class="eyebrow">Case Study 02</div>
+    <h1>Healthy meals without <em>the hassle</em></h1>
+
+    <div class="hero-story">
+      <p>After lockdown ended, I needed to restart my diet and eat healthier. Finding places to order from wasn't the issue. Finding meals that were actually compliant with my diet was. The internet had endless options but nothing that made it easy to filter, plan, and stick with it. That frustration became Fitnest.</p>
+      <div class="hero-meta-col">
+        <div class="hero-meta-pair"><h4>Role</h4><p>End to end product design</p></div>
+        <div class="hero-meta-pair"><h4>Type</h4><p>Personal project</p></div>
+        <div class="hero-meta-pair"><h4>Timeline</h4><p>3 weeks</p></div>
+        <div class="hero-meta-pair"><h4>Platform</h4><p>Mobile (iOS)</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HERO IMAGE -->
+<section class="hero-img-band">
+  <img class="reveal" src="fitnest-images/hero.png" alt="Fitnest hero">
+</section>
+
+<!-- RESEARCH -->
+<section class="prose-section">
+  <div class="cw-prose">
+    <div class="reveal">
+      <h2 class="section-heading">Talking to people who've been through it</h2>
+      <p class="body-text">I spoke to 5 people across different ages and dietary backgrounds to understand where healthy eating breaks down in practice. Not in theory, but in their actual daily routines. I wanted to know what they've tried, what stuck, and what didn't.</p>
+    </div>
+  </div>
+  <!-- ARTIFACT 1: Empathy map -->
+  <div class="cw" style="margin-top: 48px;">
+    <div class="artifact-card reveal">
+      <img class="artifact-img" src="fitnest-images/fitnest-empathy-map.png" alt="Empathy map">
+      <p class="artifact-caption">I grouped what I heard into patterns. The emotional side was just as telling as the practical problems.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FINDINGS — staggered cards -->
+<section class="findings-section">
+  <div class="cw">
+    <div class="findings-grid reveal">
+      <div class="finding-card">
+        <span class="finding-num">01</span>
+        <h3>Diet food has a reputation problem</h3>
+        <p>People who haven't been on strict diets assume the food will be boring or tasteless. That perception alone stops them from starting.</p>
+      </div>
+      <div class="finding-card">
+        <span class="finding-num">02</span>
+        <h3>Recipes exist but consistency doesn't</h3>
+        <p>People who cook healthy meals find recipes online, but busy schedules make it hard to keep up week after week.</p>
+      </div>
+      <div class="finding-card">
+        <span class="finding-num">03</span>
+        <h3>Healthy eating feels expensive</h3>
+        <p>Especially for recent graduates or people on tight budgets. The perception that eating well costs more keeps people defaulting to fast food.</p>
+      </div>
+      <div class="finding-card">
+        <span class="finding-num">04</span>
+        <h3>Quitting is the default</h3>
+        <p>When a diet requires more effort than people are used to, they stop. Not because they don't care, but because the friction is too high.</p>
+      </div>
+      <div class="finding-card">
+        <span class="finding-num">05</span>
+        <h3>Health conditions change the equation</h3>
+        <p>People over 35 with conditions like diabetes or hypertension prefer preparing meals themselves for safety reasons. They need options, not just convenience.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSIGHT BAND -->
+<section class="insight-band">
+  <div class="cw">
+    <div class="insight-band-inner reveal">
+      <p>People watch their diets for personal or health reasons. Staying on track shouldn't require becoming a meal planning expert.</p>
+      <div class="source">Problem statement, informed by user research</div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITIVE GAP -->
+<section class="prose-section">
+  <div class="cw-prose">
+    <div class="reveal">
+      <h2 class="section-heading">What's already out there</h2>
+      <p class="body-text">I audited 5 platforms, comparing food options, payment models, target audience, and overall experience. Most were either subscription heavy with limited flexibility, or had decent options but a cluttered experience that made browsing feel like work.</p>
+    </div>
+  </div>
+  <!-- ARTIFACT 2: Competitive audit table -->
+  <div class="cw" style="margin: 48px auto;">
+    <div class="artifact-card reveal">
+      <img class="artifact-img" src="fitnest-images/fitnest-competitive-audit.png" alt="Competitive audit">
+      <p class="artifact-caption">Comparing five platforms across food options, payment models, and overall experience</p>
+    </div>
+  </div>
+  <div class="cw-prose">
+    <div class="reveal">
+      <p class="body-text">The gap was clear. There was room for something that felt simple to use, offered diet compliant meals, and didn't assume users wanted to plan everything themselves.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section class="prose-section" style="padding-bottom: 80px;">
+  <div class="cw-prose">
+    <div class="reveal">
+      <h2 class="section-heading">What to build</h2>
+      <p class="body-text">Based on the research, the features that made the most sense were diet compliant meal plans delivered to your door, healthy recipes for people who like to cook, scheduled meals by the week, and meal suggestions based on what's already in your fridge.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DESIGN GALLERY -->
+<section class="design-section">
+  <div class="cw">
+    <div class="design-intro reveal">
+      <h2 class="section-heading">Designing Fitnest</h2>
+      <p>I started with wireframes to map the core flows, then moved into high fidelity. The goal was to keep everything clean and easy to navigate, even for first time users.</p>
+    </div>
+  </div>
+
+  <!-- Feature 01: text LEFT, 2 phones RIGHT, second phone shifts up 20px -->
+  <article class="design-feature reveal">
+    <div class="cw">
+      <div class="df-grid">
+        <div class="df-text">
+          <div class="df-label">.01</div>
+          <div class="df-title">Onboarding and diet quiz</div>
+          <p class="df-desc">New users take a short quiz about their preferences and health goals. Fitnest uses this to personalize meal recommendations from the start.</p>
+        </div>
+        <div class="df-phones df-phones-stagger" style="--phone-stagger: 20px">
+          <div class="phone"><img src="fitnest-images/onboarding-1.png" alt="Onboarding"></div>
+          <div class="phone"><img src="fitnest-images/onboarding-2.png" alt="Diet quiz"></div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- Feature 02: text CENTERED above, 2 phones CENTERED below, magazine overlap -->
+  <article class="design-feature reveal">
+    <div class="cw">
+      <div class="df-stack-center">
+        <div class="df-text df-text-center">
+          <div class="df-label">.02</div>
+          <div class="df-title">Meal discovery</div>
+          <p class="df-desc">Browse meals by diet type, calorie count, or category. Nutritional details are shown upfront so there's no guessing.</p>
+        </div>
+        <div class="df-phones df-phones-overlap">
+          <div class="phone"><img src="fitnest-images/meal-discover-1.png" alt="Meal browse"></div>
+          <div class="phone"><img src="fitnest-images/meal-discover-2.png" alt="Meal detail"></div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- Feature 03: 2 phones LEFT, text RIGHT (right-aligned), first phone drops 16px -->
+  <article class="design-feature reveal">
+    <div class="cw">
+      <div class="df-grid">
+        <div class="df-phones df-phones-stagger-rev" style="--phone-stagger: 16px">
+          <div class="phone"><img src="fitnest-images/scheduled-meals-1.png" alt="Calendar"></div>
+          <div class="phone"><img src="fitnest-images/scheduled-meals-2.png" alt="Day plan"></div>
+        </div>
+        <div class="df-text df-text-right">
+          <div class="df-label">.03</div>
+          <div class="df-title">Scheduled meals</div>
+          <p class="df-desc">Plan meals for the week ahead. Eliminates the daily decision of figuring out what to eat.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+</section>
+
+<!-- Feature 04 — full-width warm band breaks out of the dark section -->
+<section class="design-feature design-feature-4 reveal">
+  <div class="cw">
+    <div class="df-grid">
+      <div class="df-text">
+        <div class="df-label">.04</div>
+        <div class="df-title">Fitnest assistant</div>
+        <p class="df-desc">Not sure where to start? The assistant creates a custom meal plan based on your fitness or health needs.</p>
+      </div>
+      <div class="df-phones df-phones-stagger" style="--phone-stagger: 24px">
+        <div class="phone"><img src="fitnest-images/assistant-1.png" alt="Assistant intro"></div>
+        <div class="phone"><img src="fitnest-images/assistant-2.png" alt="Meal plan"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTING -->
+<section class="testing-section">
+  <div class="cw-prose">
+    <div class="reveal">
+      <h2 class="section-heading">What users told us</h2>
+      <p class="body-text">I tested the prototype with target users to see how they navigated the app, how useful the diet quiz felt, and whether the visual cues were working. Three things came back clearly.</p>
+    </div>
+  </div>
+  <div class="cw">
+    <div class="testing-strip reveal">
+      <div class="testing-item">
+        <span class="testing-num">01</span>
+        <p>Users had trouble finding the diet quiz. The icon wasn't intuitive and the placement wasn't prominent enough.</p>
+      </div>
+      <div class="testing-item">
+        <span class="testing-num">02</span>
+        <p>Some users felt the quiz was too long. They wanted to get to the meals faster.</p>
+      </div>
+      <div class="testing-item">
+        <span class="testing-num">03</span>
+        <p>People wanted to select more than one food option per category when browsing.</p>
+      </div>
+    </div>
+  </div>
+  <div class="cw-prose" style="padding-top:32px;">
+    <div class="reveal">
+      <p class="body-text">I used these findings to revise the icon system, shorten the quiz flow, and update the selection model for meal browsing.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WEBSITE -->
+<section class="website-section">
+  <div class="cw">
+    <div class="reveal">
+      <div style="margin-bottom:24px;">
+        <div class="eyebrow">Marketing</div>
+        <h2 class="section-heading">Fitnest website</h2>
+      </div>
+      <div class="website-frame"><img src="fitnest-images/website.png" alt="Fitnest website"></div>
+    </div>
+  </div>
+</section>
+
+<!-- REFLECTIONS -->
+<section class="reflections">
+  <div class="cw-prose">
+    <div class="reveal">
+      <div class="eyebrow" style="color:var(--accent);">Reflections</div>
+      <h2 class="section-heading">What I took from this</h2>
+
+      <blockquote>The best products come from problems you've actually felt. But feeling the problem isn't enough. You have to validate that other people feel it too.</blockquote>
+
+      <p class="body-text">This project started from personal frustration. What made it worth pursuing was hearing the same frustration from people with completely different lifestyles and dietary needs.</p>
+      <p class="body-text">The usability testing was the most valuable part. It showed me that what feels obvious as the designer is not always obvious to the person using it. Small things like icon choice and quiz length had a bigger impact on the experience than the features themselves.</p>
+    </div>
+  </div>
+</section>
+
+<!-- NEXT -->
+<section class="cs-next">
+  <div class="cw">
+    <div class="cs-next-label">Next Project</div>
+    <a class="cs-next-link" href="logigo.html">
+      <span class="cs-next-title">Logigo</span>
+      <span class="cs-next-arrow">→</span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="cw">
+    <div class="footer-inner">
+      <a href="index.html">Sosa</a>
+      <p>© 2026 Sosa</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
+  });
+}, { threshold: 0.08 });
+reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sosa — Product Design & Strategy</title>
+<style>
+  @font-face {
+    font-family: 'Fraunces';
+    src: url('fonts/Fraunces-VF.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Fraunces';
+    src: url('fonts/Fraunces-Italic-VF.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: italic;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('fonts/Geist-VF.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('fonts/Geist-Italic-VF.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: italic;
+    font-display: swap;
+  }
+
+  :root {
+    --bg-light: #F0EDE8;
+    --bg-dark: #12100E;
+    --bg-dark-card: #1E1B18;
+    --bg-mid: #E4E0DA;
+    --text-dark: #0E0E0C;
+    --text-body: #3D3A36;
+    --text-muted: #8A857E;
+    --text-light: #F0EDE8;
+    --text-light-muted: rgba(240,237,232,0.5);
+    --accent: #A89484;
+    --accent-hover: #B8A494;
+    --accent-subtle: rgba(168,148,132,0.12);
+    --border-light: rgba(14,14,12,0.1);
+    --border-dark: rgba(240,237,232,0.08);
+    --border-dark-hover: rgba(240,237,232,0.15);
+    --radius: 4px;
+    --max-w: 1080px;
+    --gutter: 64px;
+    --display: 'Fraunces', Georgia, serif;
+    --body: 'Geist', -apple-system, Helvetica, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-light);
+    color: var(--text-dark);
+    font-family: var(--body);
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: -0.3px;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: var(--max-w);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--gutter);
+    padding-right: var(--gutter);
+  }
+
+  /* ===== NAV ===== */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(240,237,232,0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .nav-inner {
+    max-width: var(--max-w); margin-left: auto; margin-right: auto;
+    padding: 20px var(--gutter);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .nav-logo {
+    font-family: var(--display); font-size: 22px; font-weight: 400;
+    color: var(--text-dark); text-decoration: none;
+  }
+
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+
+  .nav-links a {
+    font-family: var(--body); font-size: 12px; font-weight: 500;
+    color: var(--text-muted); text-decoration: none;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    transition: color 0.3s ease;
+  }
+
+  .nav-links a:hover { color: var(--text-dark); }
+
+  /* ===== HERO ===== */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    min-height: 95vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-top: 120px;
+    padding-bottom: 80px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .hero > .container { position: relative; z-index: 2; }
+
+  /* ===== HERO ARC (full circle, center anchored at hero bottom) ===== */
+  /* Fade-in lives on the wrapper so the rotor's animation can start immediately
+     and stay in lockstep with the per-card counter-rotation. */
+  .arc-mask {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    animation: arcFadeIn 1s ease 0.5s forwards;
+    -webkit-mask-image: linear-gradient(to bottom, #000 85%, transparent 100%);
+            mask-image: linear-gradient(to bottom, #000 85%, transparent 100%);
+  }
+
+  .arc-container {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    will-change: transform;
+    animation: spin 70s linear infinite;
+  }
+
+  .arc-card-slot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 180px;
+    height: 180px;
+    margin-left: -90px;
+    margin-top: -90px;
+    /* JS sets transform: translate(x, y) rotate(staticTiltRad) */
+  }
+
+  .arc-card {
+    width: 100%;
+    height: 100%;
+    background: #C4BEB5;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    will-change: transform;
+    /* Counter-rotate the rotor so each card's static tilt is preserved */
+    animation: counterSpin 70s linear infinite;
+  }
+
+  /* Cycle through 3 warm tones */
+  .arc-card-slot:nth-child(3n+1) .arc-card { background: #C4BEB5; }
+  .arc-card-slot:nth-child(3n+2) .arc-card { background: #B8AFA3; }
+  .arc-card-slot:nth-child(3n)   .arc-card { background: #D0C9C0; }
+
+  .arc-card img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    filter: sepia(0.3) saturate(0.7) brightness(0.95);
+    opacity: 0.85;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  @keyframes counterSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(-360deg); }
+  }
+
+  @keyframes arcFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .arc-container, .arc-card { animation: none !important; }
+  }
+
+  .hero-eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 32px;
+    opacity: 0; animation: fadeUp 0.7s ease 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: var(--display);
+    font-size: clamp(48px, 5.5vw, 72px);
+    line-height: 1.05; letter-spacing: -0.03em;
+    font-weight: 400;
+    margin-bottom: 48px;
+    opacity: 0; animation: fadeUp 0.7s ease 0.4s forwards;
+  }
+
+  .hero-title em { font-style: italic; }
+
+  .hero-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 40px;
+    opacity: 0; animation: fadeUp 0.7s ease 0.6s forwards;
+  }
+
+  .hero-subtitle {
+    font-size: 17px; font-weight: 400; line-height: 1.7;
+    color: var(--text-body); max-width: 440px;
+  }
+
+  .hero-ctas {
+    display: flex; gap: 16px; align-items: center; flex-shrink: 0;
+  }
+
+  .btn-primary {
+    padding: 14px 32px; background: var(--text-dark); color: var(--text-light);
+    font-family: var(--body); font-size: 12px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none;
+    border: none; cursor: pointer; border-radius: var(--radius);
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary:hover { background: #2A2724; transform: translateY(-1px); }
+
+  .btn-ghost {
+    padding: 14px 0; background: none; color: var(--text-body);
+    font-family: var(--body); font-size: 12px; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none;
+    border: none; cursor: pointer; transition: color 0.3s ease;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .btn-ghost:hover { color: var(--text-dark); }
+  .btn-ghost .arrow { transition: transform 0.3s ease; }
+  .btn-ghost:hover .arrow { transform: translateX(4px); }
+
+  /* ===== WORK (dark) ===== */
+  .work-section {
+    background: var(--bg-dark);
+    color: var(--text-light);
+    padding: 120px 0;
+  }
+
+  .work-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 40px;
+    margin-bottom: 80px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border-dark);
+  }
+
+  .work-header h2 {
+    font-family: var(--body); font-size: clamp(28px, 3vw, 40px);
+    line-height: 1.15; letter-spacing: -0.02em; font-weight: 500;
+  }
+
+  .work-header p {
+    font-size: 15px; color: var(--text-light-muted); font-weight: 300;
+    line-height: 1.7; max-width: 360px; text-align: right;
+  }
+
+  .project-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    text-decoration: none; color: inherit;
+    border-top: 1px solid var(--border-dark);
+    padding: 40px;
+    transition: all 0.4s ease;
+    position: relative;
+  }
+
+  .project-card:last-child { border-bottom: 1px solid var(--border-dark); }
+
+  /* Hover background sits inside the padding so it's inset from the dividers,
+     and gets rounded corners — instead of the card itself painting edge-to-edge. */
+  .project-card::before {
+    content: '';
+    position: absolute;
+    inset: 40px;
+    border-radius: var(--radius);
+    background: transparent;
+    transition: background 0.4s ease;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .project-card:hover::before { background: var(--bg-dark-card); }
+
+  .project-text {
+    position: relative;
+    z-index: 1;
+    padding: 0;
+    display: flex; flex-direction: column;
+    justify-content: center; gap: 16px;
+  }
+
+  .project-eyebrow { display: flex; align-items: center; gap: 16px; }
+
+  .project-num {
+    font-family: var(--display); font-size: 14px;
+    color: var(--accent); font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .project-tags-row { display: flex; gap: 6px; }
+
+  .ptag {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 3px 10px;
+    border: 1px solid var(--border-dark); border-radius: var(--radius);
+    color: rgba(240,237,232,0.35);
+    transition: all 0.4s ease;
+  }
+
+  .project-card:hover .ptag {
+    border-color: var(--border-dark-hover);
+    color: rgba(240,237,232,0.5);
+  }
+
+  .project-title {
+    font-family: var(--display); font-size: clamp(26px, 2.5vw, 34px);
+    letter-spacing: -0.02em; font-weight: 400; line-height: 1.2;
+  }
+
+  .project-desc {
+    font-size: 15px; font-weight: 300;
+    color: var(--text-light-muted); line-height: 1.65;
+    max-width: 400px;
+  }
+
+  .project-cta {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: rgba(240,237,232,0.3);
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 8px; transition: all 0.4s ease;
+  }
+
+  .project-cta .cta-arrow { transition: transform 0.3s ease; }
+  .project-card:hover .project-cta { color: var(--accent); }
+  .project-card:hover .project-cta .cta-arrow { transform: translateX(6px); }
+
+  .project-image {
+    position: relative;
+    z-index: 1;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0;
+  }
+
+  .project-image-frame {
+    position: relative;
+    width: 100%; aspect-ratio: 16/10;
+    background: var(--bg-dark-card);
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; transition: all 0.4s ease;
+  }
+
+  .project-card:hover .project-image-frame {
+    border-color: var(--border-dark-hover);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+    transform: translateY(-4px);
+  }
+
+  .project-image-frame span {
+    font-size: 12px; color: rgba(240,237,232,0.15);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  /* Hover slideshow — stacked layers, only .active is visible */
+  .ps-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 150ms ease;
+    pointer-events: none;
+  }
+
+  .ps-img.active { opacity: 1; }
+
+  /* Fitnest screenshots are portrait phone screens — let them sit in the
+     landscape frame whole, with the app's light background filling the
+     letterbox so it reads as intentional rather than cropped. */
+  .project-card[href="fitnest.html"] .project-image-frame {
+    background: #F8F7F5;
+  }
+
+  .project-card[href="fitnest.html"] .ps-img {
+    object-fit: contain;
+  }
+
+  /* ===== BUILDS (light) ===== */
+  .builds-section {
+    padding: 120px 0;
+    background: var(--bg-light);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .builds-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 40px;
+    margin-bottom: 56px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .builds-header h2 {
+    font-family: var(--body); font-size: clamp(24px, 2.5vw, 32px);
+    line-height: 1.2; letter-spacing: -0.02em; font-weight: 500;
+  }
+
+  .builds-header p {
+    font-size: 15px; color: var(--text-muted); font-weight: 300;
+    line-height: 1.7; max-width: 340px; text-align: right;
+  }
+
+  .builds-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .build-card {
+    background: var(--bg-mid);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius); padding: 36px 32px;
+    transition: all 0.4s ease; cursor: pointer;
+    text-decoration: none; color: inherit;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+
+  .build-card:hover {
+    border-color: var(--text-muted);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(14,14,12,0.08);
+  }
+
+  .build-tools { display: flex; gap: 6px; }
+
+  .build-tool {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 4px 10px;
+    background: var(--accent-subtle); color: var(--accent);
+    border-radius: var(--radius);
+  }
+
+  .build-card h3 {
+    font-family: var(--display); font-size: 24px;
+    font-weight: 400; letter-spacing: -0.01em;
+  }
+
+  .build-card p { font-size: 14px; color: var(--text-body); font-weight: 300; line-height: 1.65; }
+
+  /* ===== ABOUT (dark) ===== */
+  .about-section {
+    padding: 120px 0;
+    background: var(--bg-dark);
+    color: var(--text-light);
+  }
+
+  .about-grid {
+    display: grid; grid-template-columns: 300px 1fr;
+    gap: 80px; align-items: start;
+  }
+
+  .about-photo {
+    width: 100%; aspect-ratio: 3/4;
+    background: var(--bg-dark-card); border-radius: var(--radius);
+    border: 1px solid var(--border-dark);
+    display: flex; align-items: center; justify-content: center;
+    position: sticky; top: 120px;
+    overflow: hidden;
+  }
+
+  .about-photo img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+  }
+
+  .about-photo span {
+    font-size: 12px; color: rgba(240,237,232,0.15);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  .about-eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 24px;
+  }
+
+  .about-text h2 {
+    font-family: var(--display); font-size: clamp(28px, 3vw, 40px);
+    line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 28px;
+    font-weight: 400;
+  }
+
+  .about-text h2 em { font-style: italic; }
+
+  .about-text p {
+    font-size: 16px; color: var(--text-light-muted); font-weight: 300;
+    line-height: 1.8; margin-bottom: 16px;
+  }
+
+  .about-attributes {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 28px; margin-top: 48px;
+  }
+
+  .attribute { border-top: 1px solid var(--border-dark); padding-top: 16px; }
+
+  .attribute h4 {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: rgba(240,237,232,0.3); margin-bottom: 8px;
+  }
+
+  .attribute p {
+    font-size: 15px; color: var(--text-light); font-weight: 400;
+    margin-bottom: 0; line-height: 1.5;
+  }
+
+  /* ===== FOOTER (light) ===== */
+  .footer-section {
+    padding: 96px 0;
+    background: var(--bg-light);
+    border-top: 1px solid var(--border-light);
+  }
+
+  .footer-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .footer-left h2 {
+    font-family: var(--display); font-size: clamp(36px, 5vw, 64px);
+    line-height: 1.05; letter-spacing: -0.03em; font-weight: 400;
+    margin-bottom: 32px;
+  }
+
+  .footer-left h2 em { font-style: italic; }
+
+  .footer-links { display: flex; gap: 24px; }
+
+  .footer-links a {
+    font-size: 12px; font-weight: 500; color: var(--text-muted);
+    text-decoration: none; letter-spacing: 0.08em; text-transform: uppercase;
+    transition: color 0.3s ease;
+    padding-bottom: 4px;
+    border-bottom: 1px solid transparent;
+  }
+
+  .footer-links a:hover {
+    color: var(--text-dark);
+    border-bottom-color: var(--text-dark);
+  }
+
+  .footer-right p { font-size: 12px; color: var(--text-muted); }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0; transform: translateY(28px);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 1100px) {
+    :root { --gutter: 40px; }
+  }
+
+  @media (max-width: 900px) {
+    :root { --gutter: 28px; }
+    .hero { padding-top: 140px; padding-bottom: 60px; }
+    .arc-mask { display: none; }
+    .hero-bottom { flex-direction: column; align-items: flex-start; gap: 32px; }
+    .work-header, .builds-header { flex-direction: column; align-items: flex-start; }
+    .work-header p, .builds-header p { text-align: left; }
+    .project-card { grid-template-columns: 1fr; padding: 32px; }
+    .project-card::before { inset: 32px; }
+    .builds-grid { grid-template-columns: 1fr; }
+    .about-grid { grid-template-columns: 1fr; }
+    .about-photo { position: static; max-width: 260px; }
+    .footer-grid { flex-direction: column; align-items: flex-start; gap: 40px; }
+  }
+
+  @media (max-width: 600px) {
+    :root { --gutter: 20px; }
+    .hero { padding-top: 120px; }
+    .hero-ctas { flex-direction: column; align-items: flex-start; }
+    .about-attributes { grid-template-columns: 1fr; }
+    .nav-links { gap: 16px; }
+    .nav-links a { font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">Sosa</a>
+    <ul class="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#builds">Builds</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="arc-mask" aria-hidden="true">
+    <div class="arc-container" id="heroArc"></div>
+  </div>
+  <div class="container">
+    <div class="hero-eyebrow">Product Design & Strategy</div>
+    <h1 class="hero-title">Complex systems,<br><em>clear products.</em></h1>
+    <div class="hero-bottom">
+      <p class="hero-subtitle">I work in fintech, logistics, and operations. The kind of spaces where things break if the design doesn't hold up. I lead the process from research to delivery.</p>
+      <div class="hero-ctas">
+        <a href="#work" class="btn-primary">Selected Work</a>
+        <a href="mailto:esosa.edogun@gmail.com" class="btn-ghost">Get in touch <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="work-section" id="work">
+  <div class="container">
+    <div class="work-header reveal">
+      <h2>Selected work</h2>
+      <p>Three projects. Each one started with a different kind of complexity and each one required a different approach to solve it.</p>
+    </div>
+
+    <a class="project-card reveal" href="flux.html">
+      <div class="project-text">
+        <div class="project-eyebrow">
+          <span class="project-num">01</span>
+          <div class="project-tags-row"><span class="ptag">B2B SaaS</span><span class="ptag">Fintech</span><span class="ptag">Strategy</span></div>
+        </div>
+        <h3 class="project-title">Flux</h3>
+        <p class="project-desc">A supply chain intelligence platform for African businesses. I led the pivot from inventory financing to a system that serves banks, merchants, and distributors.</p>
+        <div class="project-cta">Read case study <span class="cta-arrow">→</span></div>
+      </div>
+      <div class="project-image">
+        <div class="project-image-frame">
+          <img class="ps-img active" src="flux-images/hero.jpeg" alt="Flux dashboard">
+        </div>
+      </div>
+    </a>
+
+    <a class="project-card reveal" href="fitnest.html">
+      <div class="project-text">
+        <div class="project-eyebrow">
+          <span class="project-num">02</span>
+          <div class="project-tags-row"><span class="ptag">Mobile</span><span class="ptag">B2C</span><span class="ptag">User Research</span></div>
+        </div>
+        <h3 class="project-title">Fitnest</h3>
+        <p class="project-desc">A mobile platform that makes it easier to find and stick to healthy meals. Born from a personal problem, validated with real users.</p>
+        <div class="project-cta">Read case study <span class="cta-arrow">→</span></div>
+      </div>
+      <div class="project-image">
+        <div class="project-image-frame">
+          <img class="ps-img active" src="fitnest-images/hero.png" alt="Fitnest hero">
+        </div>
+      </div>
+    </a>
+
+    <a class="project-card reveal" href="logigo.html">
+      <div class="project-text">
+        <div class="project-eyebrow">
+          <span class="project-num">03</span>
+          <div class="project-tags-row"><span class="ptag">B2B SaaS</span><span class="ptag">Dashboard</span><span class="ptag">Logistics</span></div>
+        </div>
+        <h3 class="project-title">Logigo</h3>
+        <p class="project-desc">Dispatch management for small logistics companies and vendors. Research uncovered a second audience that reshaped the product.</p>
+        <div class="project-cta">Read case study <span class="cta-arrow">→</span></div>
+      </div>
+      <div class="project-image">
+        <div class="project-image-frame">
+          <img class="ps-img active" src="logigo-images/hero.png" alt="Logigo dashboard">
+        </div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<section class="builds-section" id="builds">
+  <div class="container">
+    <div class="builds-header reveal">
+      <h2>Things I built</h2>
+      <p>I like to explore product ideas by actually building them. These are less about pixel perfection and more about how I think through problems.</p>
+    </div>
+    <div class="builds-grid">
+      <a class="build-card reveal" href="https://www.thetragent.io/" target="_blank" rel="noopener">
+        <div class="build-tools"><span class="build-tool">Claude</span><span class="build-tool">Figma</span><span class="build-tool">Website</span></div>
+        <h3>Tragent</h3>
+        <p>A product I'm building with a small team. Designed and shipped the marketing site while the product is in stealth.</p>
+      </a>
+      <a class="build-card reveal" href="https://usetwinee.com/" target="_blank" rel="noopener">
+        <div class="build-tools"><span class="build-tool">Claude</span><span class="build-tool">Cursor</span></div>
+        <h3>Twine</h3>
+        <p>A conversational app I designed and built end to end. From concept to live product.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="about-section" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-photo reveal"><img src="about-photo.png" alt="Sosa"></div>
+      <div class="about-text reveal">
+        <div class="about-eyebrow">About</div>
+        <h2>I design for systems<br>that <em>earn trust</em></h2>
+        <p>I'm a Senior Product Designer working in fintech, logistics, and operations. The kind of products where a confusing flow doesn't just frustrate someone, it costs a business money or breaks a process that real people depend on.</p>
+        <p>I lead the full design process, from research through to shipped product. I care most about the part where messy, complex problems get structured into something that actually makes sense to use.</p>
+        <div class="about-attributes">
+          <div class="attribute"><h4>Focus</h4><p>Fintech, Supply Chain, B2B SaaS, Operations</p></div>
+          <div class="attribute"><h4>Approach</h4><p>Systems thinking, user research, product strategy</p></div>
+          <div class="attribute"><h4>Tools</h4><p>Figma, Claude, Cursor</p></div>
+          <div class="attribute"><h4>Status</h4><p>Open to mid to senior product design roles</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="footer-section" id="contact">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-left">
+        <h2>Have something<br><em>worth building?</em></h2>
+        <div class="footer-links">
+          <a href="mailto:esosa.edogun@gmail.com">Email</a>
+          <a href="https://www.linkedin.com/in/esosa-edogun/" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://drive.google.com/file/d/1n9ENbroU0xePb4SYUzS42mZ45wRNtuGF/view" target="_blank" rel="noopener">Resume</a>
+          <a href="https://x.com/E_seosa" target="_blank" rel="noopener">X</a>
+        </div>
+      </div>
+      <div class="footer-right"><p>© 2026 Sosa</p></div>
+    </div>
+  </div>
+</section>
+
+<script>
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08 });
+reveals.forEach(el => observer.observe(el));
+
+// Project card hover slideshow — cycle through UI screenshots from each
+// case study while hovering, fade back to hero on mouseleave.
+// Disabled below 900px; touch devices won't fire mouseenter so they show static.
+(function projectCardSlideshow() {
+  if (window.innerWidth < 900) return;
+
+  const slideshows = {
+    'flux.html': [
+      'flux-images/hero.jpeg',
+      'flux-images/shared-platform.png',
+      'flux-images/digital-receipts.png',
+      'flux-images/fraud-prevention.png',
+      'flux-images/insights.png',
+      'flux-images/distributor-app.png',
+    ],
+    'fitnest.html': [
+      'fitnest-images/hero.png',
+      'fitnest-images/onboarding-1.png',
+      'fitnest-images/onboarding-2.png',
+      'fitnest-images/meal-discover-1.png',
+      'fitnest-images/meal-discover-2.png',
+      'fitnest-images/scheduled-meals-1.png',
+      'fitnest-images/scheduled-meals-2.png',
+      'fitnest-images/assistant-1.png',
+      'fitnest-images/assistant-2.png',
+    ],
+    'logigo.html': [
+      'logigo-images/hero.png',
+      'logigo-images/dashboard.png',
+      'logigo-images/dispatch.png',
+      'logigo-images/suppliers.png',
+      'logigo-images/whatsapp.png',
+      'logigo-images/vendor-app.png',
+    ],
+  };
+
+  document.querySelectorAll('.project-card').forEach((card) => {
+    const href = card.getAttribute('href');
+    const sources = slideshows[href];
+    if (!sources || sources.length < 2) return;
+
+    const frame = card.querySelector('.project-image-frame');
+    if (!frame) return;
+
+    // Replace the static hero <img> with the full stack of slideshow layers.
+    // Browsers begin loading each <img> as soon as it joins the DOM, so by
+    // the time the user hovers, the additional images are cached.
+    frame.innerHTML = '';
+    sources.forEach((src, i) => {
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = '';
+      img.className = i === 0 ? 'ps-img active' : 'ps-img';
+      img.decoding = 'async';
+      frame.appendChild(img);
+    });
+
+    const imgs = frame.querySelectorAll('.ps-img');
+    let interval = null;
+    let timeout = null;
+    let idx = 0;
+
+    const showSlide = (n) => {
+      imgs.forEach((img, i) => img.classList.toggle('active', i === n));
+    };
+
+    const stopCycle = () => {
+      if (timeout) { clearTimeout(timeout); timeout = null; }
+      if (interval) { clearInterval(interval); interval = null; }
+    };
+
+    card.addEventListener('mouseenter', () => {
+      stopCycle();
+      idx = 0;
+      // First transition fires at 500ms — the user has just landed, no point
+      // making them wait the full cycle interval to see anything happen.
+      timeout = setTimeout(() => {
+        idx = 1;
+        showSlide(idx);
+        // Subsequent transitions every 1200ms.
+        interval = setInterval(() => {
+          idx = (idx + 1) % imgs.length;
+          if (idx === 0) idx = 1; // skip back-to-hero during the cycle
+          showSlide(idx);
+        }, 1200);
+      }, 500);
+    });
+
+    card.addEventListener('mouseleave', () => {
+      stopCycle();
+      idx = 0;
+      showSlide(0);
+    });
+  });
+})();
+
+// Hero arc: full circle of 16 cards, center anchored at hero bottom.
+// Only the upper hemisphere is visible (lower half clipped by .hero overflow:hidden).
+// The container spins continuously; each card has a static rotate(-angle) per the spec.
+(function buildHeroArc() {
+  const container = document.getElementById('heroArc');
+  if (!container) return;
+
+  const totalCards = 14;
+  const cardSize = 180;
+  // Minimum radius so 14 cards of this size don't overlap on the circle
+  // (chord between adjacent cards must exceed cardSize, plus a small visual gap).
+  const minRadius = (cardSize + 18) / (2 * Math.sin(Math.PI / totalCards));
+
+  function getRadius() {
+    return Math.max(minRadius, Math.min(window.innerWidth * 0.48, 650));
+  }
+
+  // Each card's slot is pure translation (no rotation). The card itself
+  // counter-rotates the rotor at the same speed via CSS, so the image's
+  // visual orientation stays at 0° throughout the spin: upright always.
+  function build() {
+    const radius = getRadius();
+    container.innerHTML = '';
+    for (let i = 0; i < totalCards; i++) {
+      const angle = (2 * Math.PI / totalCards) * i;
+      const x = Math.cos(angle) * radius;
+      const y = Math.sin(angle) * radius;
+
+      const slot = document.createElement('div');
+      slot.className = 'arc-card-slot';
+      slot.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px)`;
+
+      const card = document.createElement('div');
+      card.className = 'arc-card';
+
+      const img = document.createElement('img');
+      img.src = `arc-images/${(i % 14) + 1}.png`;
+      img.alt = '';
+      img.decoding = 'async';
+      card.appendChild(img);
+
+      slot.appendChild(card);
+      container.appendChild(slot);
+    }
+  }
+
+  build();
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(build, 150);
+  });
+})();
+</script>
+
+</body>
+</html>

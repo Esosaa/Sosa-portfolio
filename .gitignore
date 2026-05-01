@@ -1,0 +1,12 @@
+# macOS
+.DS_Store
+
+# Editor / OS junk
+*.swp
+*.swo
+Thumbs.db
+
+# Local env / build artifacts
+.env
+.env.local
+node_modules/

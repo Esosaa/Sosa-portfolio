@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flux — Case Study | Sosa</title>
+<style>
+  @font-face {
+    font-family: 'Fraunces';
+    src: url('fonts/Fraunces-VF.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Fraunces';
+    src: url('fonts/Fraunces-Italic-VF.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: italic;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('fonts/Geist-VF.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('fonts/Geist-Italic-VF.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: italic;
+    font-display: swap;
+  }
+
+  :root {
+    --bg-light: #F0EDE8;
+    --bg-dark: #12100E;
+    --bg-dark-card: #1E1B18;
+    --bg-mid: #E4E0DA;
+    --text-dark: #0E0E0C;
+    --text-body: #3D3A36;
+    --text-muted: #8A857E;
+    --text-light: #F0EDE8;
+    --text-light-muted: rgba(240,237,232,0.5);
+    --accent: #A89484;
+    --accent-subtle: rgba(168,148,132,0.12);
+    --border-light: rgba(14,14,12,0.1);
+    --border-dark: rgba(240,237,232,0.08);
+    --border-dark-hover: rgba(240,237,232,0.15);
+    --radius: 4px;
+    --max-w: 1080px;
+    --prose-w: 680px;
+    --display: 'Fraunces', Georgia, serif;
+    --body: 'Geist', -apple-system, Helvetica, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-light);
+    color: var(--text-dark);
+    font-family: var(--body);
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: -0.3px;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .cw { max-width: var(--max-w); margin: 0 auto; padding: 0 64px; }
+  .cw-prose { max-width: calc(var(--prose-w) + 128px); margin: 0 auto; padding: 0 64px; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(240,237,232,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .nav-inner {
+    max-width: var(--max-w); margin: 0 auto; padding: 20px 64px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .nav-logo {
+    font-family: var(--display); font-size: 22px; font-weight: 400;
+    color: var(--text-dark); text-decoration: none;
+  }
+
+  .nav-back {
+    font-size: 12px; font-weight: 500; color: var(--text-muted);
+    text-decoration: none; letter-spacing: 0.08em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px; transition: color 0.3s ease;
+  }
+
+  .nav-back:hover { color: var(--text-dark); }
+  .nav-back .arrow { transition: transform 0.3s ease; }
+  .nav-back:hover .arrow { transform: translateX(-4px); }
+
+  /* TYPOGRAPHY */
+  .eyebrow {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 24px;
+  }
+
+  .section-heading {
+    font-family: var(--body); font-size: clamp(20px, 2.2vw, 26px);
+    line-height: 1.3; letter-spacing: -0.02em; font-weight: 500;
+    margin-bottom: 20px;
+  }
+
+  .body-text {
+    font-size: 17px; font-weight: 400; color: var(--text-body);
+    line-height: 1.8; margin-bottom: 16px;
+  }
+
+  .body-text:last-child { margin-bottom: 0; }
+
+  /* ===== HERO ===== */
+  .cs-hero {
+    padding: 180px 0 48px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .cs-hero .eyebrow { opacity: 0; animation: fadeUp 0.7s ease 0.15s forwards; }
+
+  .cs-hero h1 {
+    font-family: var(--display); font-size: clamp(40px, 5vw, 60px);
+    line-height: 1.08; letter-spacing: -0.03em; font-weight: 400;
+    margin-bottom: 32px; max-width: 700px;
+    opacity: 0; animation: fadeUp 0.7s ease 0.3s forwards;
+  }
+
+  .cs-hero h1 em { font-style: italic; }
+
+  .cs-hero-bottom {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    gap: 40px;
+    opacity: 0; animation: fadeUp 0.7s ease 0.5s forwards;
+  }
+
+  .cs-hero-sub {
+    font-size: 18px; font-weight: 400; color: var(--text-body);
+    line-height: 1.7; max-width: 480px;
+  }
+
+  .cs-meta-row {
+    display: flex; gap: 40px; flex-shrink: 0;
+  }
+
+  .cs-meta-item h4 {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
+  }
+
+  .cs-meta-item p { font-size: 15px; color: var(--text-dark); font-weight: 400; }
+
+  .cs-meta-item p a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--text-muted);
+    transition: text-decoration-color 0.3s ease, color 0.3s ease;
+  }
+
+  .cs-meta-item p a:hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+
+  /* ===== HERO IMAGE (dark, full width) ===== */
+  .hero-img-section {
+    background: var(--bg-dark); padding: 80px 0;
+  }
+
+  .hero-img-frame {
+    background: var(--bg-dark-card);
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius);
+    aspect-ratio: 16/9;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+
+  .hero-img-frame span {
+    font-size: 12px; color: rgba(240,237,232,0.12);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  .hero-img-frame img,
+  .distro-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* ===== PROSE ===== */
+  .prose-section { padding: 88px 0 0; }
+  .prose-section + .prose-section { padding-top: 64px; }
+
+  /* ===== PULL QUOTE (breaks the grid) ===== */
+  .pull-quote {
+    padding: 72px 0;
+    border-top: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+    margin: 64px 0;
+  }
+
+  .pull-quote p {
+    font-family: var(--display); font-size: clamp(24px, 3vw, 36px);
+    font-weight: 400; font-style: italic; line-height: 1.35;
+    letter-spacing: -0.02em; color: var(--text-dark);
+    max-width: 800px;
+  }
+
+  /* ===== PAIN POINTS — horizontal scroll feel ===== */
+  .pain-strip {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px;
+    margin: 36px 0;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius); overflow: hidden;
+  }
+
+  .pain-item {
+    padding: 28px 24px; background: var(--bg-mid);
+    display: flex; flex-direction: column; gap: 10px;
+  }
+
+  .pain-item .pain-icon { font-size: 20px; }
+
+  .pain-item p {
+    font-size: 13px; color: var(--text-body); line-height: 1.5;
+    font-weight: 400; margin: 0;
+  }
+
+  /* ===== STAT — dramatic, full width dark ===== */
+  .stat-band {
+    background: var(--bg-dark); color: var(--text-light);
+    padding: 80px 0;
+    margin: 64px 0 0;
+  }
+
+  .stat-band-inner {
+    display: flex; align-items: baseline; gap: 32px;
+  }
+
+  .stat-number {
+    font-family: var(--display); font-size: clamp(72px, 10vw, 120px);
+    font-weight: 300; line-height: 1; letter-spacing: -0.04em;
+    color: var(--text-light); opacity: 0.9;
+  }
+
+  .stat-context {
+    font-size: 18px; font-weight: 300; color: var(--text-light-muted);
+    line-height: 1.65; max-width: 420px;
+  }
+
+  /* ===== FEATURES — alternating layout ===== */
+  .features-section {
+    background: var(--bg-dark); color: var(--text-light);
+    padding: 96px 0;
+  }
+
+  .features-intro {
+    max-width: var(--prose-w); margin-bottom: 72px;
+  }
+
+  .features-intro .section-heading { color: var(--text-light); }
+
+  .features-intro p {
+    font-size: 17px; font-weight: 400; color: var(--text-light-muted);
+    line-height: 1.7;
+  }
+
+  .feature-block { margin-top: 96px; }
+
+  /* Text and image both sit inside the same .cw container, so their
+     left edges align on the same vertical line. The text just caps
+     itself at the prose width. */
+  .feature-text {
+    max-width: var(--prose-w);
+    margin-bottom: 40px;
+  }
+
+  .feature-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 10px; opacity: 0.8;
+  }
+
+  /* Section heading is clamp(20px, 2.2vw, 26px); titles track 1px smaller. */
+  .feature-title {
+    font-family: var(--body);
+    font-size: clamp(19px, 2.1vw, 25px);
+    font-weight: 500;
+    color: var(--text-light); margin-bottom: 12px; letter-spacing: -0.01em;
+  }
+
+  .feature-desc {
+    font-size: 17px; color: var(--text-light-muted); font-weight: 400;
+    line-height: 1.65;
+  }
+
+  .feature-img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 8px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+    object-fit: cover;
+    display: block;
+  }
+
+  /* ===== PIVOT — full-width disruption ===== */
+  .pivot-section {
+    background: var(--bg-mid);
+    padding: 120px 0;
+    border-top: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .pivot-top {
+    max-width: var(--prose-w);
+    margin-bottom: 56px;
+  }
+
+  .pivot-cols {
+    display: grid; grid-template-columns: 1fr 64px 1fr;
+    align-items: start; gap: 0;
+  }
+
+  .pivot-col { }
+
+  .pivot-col h4 {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.15em;
+    text-transform: uppercase; margin-bottom: 20px;
+  }
+
+  .pivot-col.before h4 { color: var(--text-muted); }
+  .pivot-col.after h4 { color: var(--text-dark); }
+
+  .pivot-col p {
+    font-size: 16px; color: var(--text-body); font-weight: 400;
+    line-height: 1.7; margin-bottom: 16px;
+  }
+
+  .pivot-col ul {
+    list-style: none; display: flex; flex-direction: column; gap: 10px;
+  }
+
+  .pivot-col ul li {
+    font-size: 15px; color: var(--text-body); font-weight: 400;
+    padding-left: 16px; position: relative; line-height: 1.5;
+  }
+
+  .pivot-col ul li::before {
+    content: ''; position: absolute; left: 0; top: 8px;
+    width: 5px; height: 5px; border-radius: 50%;
+  }
+
+  .pivot-col.before ul li::before { background: var(--text-muted); opacity: 0.3; }
+  .pivot-col.after ul li::before { background: var(--accent); }
+
+  .pivot-divider {
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .pivot-arrow {
+    font-size: 24px; color: var(--accent);
+    background: var(--bg-light); width: 48px; height: 48px;
+    border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; border: 1px solid var(--border-light);
+  }
+
+  /* ===== DISTRIBUTORS — split with dark image ===== */
+  .distro-section {
+    background: var(--bg-dark); color: var(--text-light);
+    padding: 96px 0;
+  }
+
+  .distro-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 64px; align-items: center;
+  }
+
+  .distro-text .section-heading { color: var(--text-light); }
+
+  .distro-text p {
+    font-size: 17px; color: var(--text-light-muted); font-weight: 400;
+    line-height: 1.8; margin-bottom: 16px;
+  }
+
+  .distro-img {
+    background: var(--bg-dark-card);
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius);
+    aspect-ratio: 1/1;
+    display: flex; align-items: center; justify-content: center;
+    margin-left: auto;
+    width: 100%;
+    max-width: 440px;
+    overflow: hidden;
+  }
+
+  .distro-img span {
+    font-size: 12px; color: rgba(240,237,232,0.1);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  /* ===== REFLECTIONS ===== */
+  .reflections {
+    padding: 96px 0;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .reflections blockquote {
+    font-family: var(--display); font-size: clamp(22px, 2.5vw, 30px);
+    font-weight: 400; font-style: italic; color: var(--text-dark);
+    line-height: 1.4; margin: 36px 0; padding-left: 24px;
+    border-left: 2px solid var(--accent);
+  }
+
+  /* ===== NEXT ===== */
+  .cs-next {
+    padding: 64px 0; border-top: 1px solid var(--border-light);
+    background: var(--bg-mid);
+  }
+
+  .cs-next-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px;
+  }
+
+  .cs-next-link {
+    text-decoration: none; color: inherit;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 28px 0;
+    border-top: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+    transition: all 0.3s ease;
+  }
+
+  .cs-next-link:hover { padding-left: 12px; }
+
+  .cs-next-title {
+    font-family: var(--display); font-size: clamp(24px, 3vw, 40px);
+    letter-spacing: -0.02em; font-weight: 400; transition: color 0.3s ease;
+  }
+
+  .cs-next-link:hover .cs-next-title { color: var(--accent); }
+  .cs-next-arrow { font-size: 24px; color: var(--text-muted); transition: all 0.3s ease; }
+  .cs-next-link:hover .cs-next-arrow { color: var(--accent); transform: translateX(8px); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border-light);
+    background: var(--bg-light); padding: 48px 0;
+  }
+
+  .footer-inner { display: flex; justify-content: space-between; align-items: center; }
+
+  footer a { font-family: var(--display); font-size: 18px; color: var(--text-dark); text-decoration: none; }
+  footer p { font-size: 12px; color: var(--text-muted); }
+
+  /* ===== ARTIFACT (process screenshots) ===== */
+  .artifact-card {
+    background: var(--bg-dark-card);
+    border: 1px solid var(--border-dark);
+    border-radius: 8px;
+    padding: 40px;
+  }
+
+  .artifact-card.light {
+    background: var(--bg-mid);
+    border-color: var(--border-light);
+  }
+
+  .artifact-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 4px;
+  }
+
+  .artifact-placeholder {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 4px;
+    background: rgba(240, 237, 232, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(240, 237, 232, 0.25);
+    text-align: center;
+    padding: 0 24px;
+  }
+
+  .artifact-card.light .artifact-placeholder {
+    background: rgba(14, 14, 12, 0.04);
+    color: var(--text-muted);
+  }
+
+  .artifact-caption {
+    font-size: 12px;
+    color: rgba(240, 237, 232, 0.5);
+    text-align: center;
+    margin-top: 16px;
+    line-height: 1.5;
+  }
+
+  .artifact-card.light .artifact-caption {
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 700px) {
+    .artifact-card { padding: 24px; }
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0; transform: translateY(28px);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .cw, .cw-prose, .nav-inner { padding-left: 28px; padding-right: 28px; }
+    .cs-hero-bottom { flex-direction: column; align-items: flex-start; gap: 32px; }
+    .cs-meta-row { flex-wrap: wrap; gap: 24px; }
+    .pain-strip { grid-template-columns: 1fr 1fr; }
+    .stat-band-inner { flex-direction: column; gap: 16px; }
+    .feature-block { margin-top: 72px; }
+    .feature-text { margin-bottom: 28px; }
+    .pivot-cols { grid-template-columns: 1fr; gap: 32px; }
+    .pivot-divider { justify-content: flex-start; }
+    .distro-grid { grid-template-columns: 1fr; }
+    .distro-img { margin-left: 0; max-width: 320px; }
+  }
+
+  @media (max-width: 600px) {
+    .pain-strip { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="index.html">Sosa</a>
+    <a class="nav-back" href="index.html"><span class="arrow">←</span> All Projects</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="cs-hero">
+  <div class="cw">
+    <div class="eyebrow">Case Study 01</div>
+    <h1>From inventory financing to <em>supply chain intelligence</em></h1>
+    <div class="cs-hero-bottom">
+      <p class="cs-hero-sub">We started building what we thought was a tool for distributor loans. It became the foundation for how African businesses move goods.</p>
+      <div class="cs-meta-row">
+        <div class="cs-meta-item"><h4>Role</h4><p>Design & Strategy Lead</p></div>
+        <div class="cs-meta-item"><h4>Team</h4><p>8 people</p></div>
+        <div class="cs-meta-item"><h4>Status</h4><p>Live at <a href="https://www.taficasa.com/flux" target="_blank" rel="noopener">taficasa.com</a></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HERO IMAGE -->
+<section class="hero-img-section">
+  <div class="cw">
+    <div class="hero-img-frame reveal"><img src="flux-images/hero.jpeg" alt="Flux dashboard"></div>
+  </div>
+</section>
+
+<!-- CONTEXT -->
+<section class="prose-section">
+  <div class="cw-prose">
+    <div class="reveal">
+      <h2 class="section-heading">The problem wasn't obvious from the outside</h2>
+      <p class="body-text">At TafiCasa, we set out to build operating systems for African businesses, starting with the supply chain space. The first thing we learned is that this space is still heavily manual. Paper documents, phone calls, fragmented data everywhere.</p>
+      <p class="body-text">We narrowed our focus and spoke to the people closest to it. Banks issuing inventory-backed loans, merchants producing goods, and distributors moving them across markets.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT WE HEARD -->
+<section class="prose-section">
+  <div class="cw-prose">
+    <div class="reveal">
+      <h2 class="section-heading">What kept coming up</h2>
+      <p class="body-text">A few things were consistent across every conversation.</p>
+    </div>
+  </div>
+  <div class="cw">
+    <div class="pain-strip reveal">
+      <div class="pain-item"><span class="pain-icon">🗨</span><p>No single place for banks, merchants, and distributors to collaborate</p></div>
+      <div class="pain-item"><span class="pain-icon">📄</span><p>Pickup slips were paper based and easy to forge or duplicate</p></div>
+      <div class="pain-item"><span class="pain-icon">👁</span><p>Visibility across financing, inventory, and distribution was nearly zero</p></div>
+      <div class="pain-item"><span class="pain-icon">⚠</span><p>Decisions were reactive because no one had the full picture</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- STAT BAND -->
+<section class="stat-band">
+  <div class="cw">
+    <div class="stat-band-inner reveal">
+      <span class="stat-number">30%</span>
+      <span class="stat-context">of distributor loans in a single quarter were flagged for delayed repayment. The main reason was that there was no traceable pickup or proof of product release.</span>
+    </div>
+  </div>
+</section>
+
+<!-- PULL QUOTE -->
+<section class="pull-quote">
+  <div class="cw">
+    <p class="reveal">We didn't try to replace what people already knew. We designed Flux to make their existing processes work better.</p>
+  </div>
+</section>
+
+<!-- APPROACH -->
+<section class="prose-section">
+  <div class="cw-prose">
+    <div class="reveal">
+      <p class="body-text">We started with the banks because they're the most structured users. Highly regulated, deeply process driven. Our tools had to match how they already work without adding complexity on top.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ARTIFACT 1: User flow diagram -->
+<section class="prose-section" style="padding-bottom: 96px;">
+  <div class="cw-prose">
+    <div class="reveal">
+      <h2 class="section-heading">Mapping the system before designing it</h2>
+      <p class="body-text">Before jumping into screens, we mapped how each stakeholder would move through the platform. Merchants, banks, and distributors all had different entry points and different needs. This flow shaped every design decision that followed.</p>
+    </div>
+  </div>
+  <div class="cw" style="margin-top: 48px;">
+    <div class="artifact-card reveal">
+      <img class="artifact-img" src="flux-images/flux-user-flow.png" alt="User flow diagram">
+      <p class="artifact-caption">System flow mapping stakeholder journeys through the Flux platform</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES — text above, full-width image below; stacked vertically -->
+<section class="features-section">
+  <div class="cw">
+    <div class="features-intro reveal">
+      <h2 class="section-heading">What we built</h2>
+      <p>Four core pieces that work together to give every stakeholder visibility into the same system.</p>
+    </div>
+  </div>
+
+  <article class="feature-block reveal">
+    <div class="cw">
+      <div class="feature-text">
+        <div class="feature-label">.01</div>
+        <div class="feature-title">Shared collaboration platform</div>
+        <p class="feature-desc">Banks, merchants, and distributors in one space. No more back channel calls or email chains to confirm what's happening.</p>
+      </div>
+      <img class="feature-img" src="flux-images/shared-platform.png" alt="Shared collaboration platform">
+    </div>
+  </article>
+
+  <article class="feature-block reveal">
+    <div class="cw">
+      <div class="feature-text">
+        <div class="feature-label">.02</div>
+        <div class="feature-title">Digital product receipts</div>
+        <p class="feature-desc">Tamper proof receipts stored in a central vault. Issued, transferred, and used for pickups directly in the platform.</p>
+      </div>
+      <img class="feature-img" src="flux-images/digital-receipts.png" alt="Digital product receipts vault">
+    </div>
+  </article>
+
+  <article class="feature-block reveal">
+    <div class="cw">
+      <div class="feature-text">
+        <div class="feature-label">.03</div>
+        <div class="feature-title">Fraud Prevention</div>
+        <p class="feature-desc">We introduced secure pickup codes that merchants must verify before handing over goods, reducing unauthorized collections.</p>
+      </div>
+      <img class="feature-img" src="flux-images/fraud-prevention.png" alt="Fraud prevention pickup codes">
+    </div>
+  </article>
+
+  <article class="feature-block reveal">
+    <div class="cw">
+      <div class="feature-text">
+        <div class="feature-label">.04</div>
+        <div class="feature-title">Real time insights</div>
+        <p class="feature-desc">An analytics layer that gives stakeholders actual visibility into what's happening across the supply chain.</p>
+      </div>
+      <img class="feature-img" src="flux-images/insights.png" alt="Real time insights analytics">
+    </div>
+  </article>
+</section>
+
+<!-- PIVOT -->
+<section class="prose-section" style="padding: 120px 0;">
+  <div class="cw-prose">
+    <div class="reveal">
+      <h2 class="section-heading">Then we realized we were only solving half the problem</h2>
+      <p class="body-text">Banks loved what we built. But merchants and distributors kept telling us they needed more than a financing tool. They needed visibility into their own operations.</p>
+      <p class="body-text">We stepped back and mapped every feature we'd shipped. Each person on the team wrote down what they thought Flux actually was. The words that came up most were supply chain, inventory, product movement, and visibility.</p>
+    </div>
+  </div>
+  <!-- ARTIFACT 2: FigJam team alignment board -->
+  <div class="cw" style="margin-top: 48px;">
+    <div class="artifact-card light reveal">
+      <img class="artifact-img" src="flux-images/flux-figjam-board.png" alt="FigJam team alignment board">
+      <p class="artifact-caption">Each person on the team defined what Flux actually was. The patterns were clear.</p>
+    </div>
+  </div>
+</section>
+
+<section class="pivot-section">
+  <div class="cw">
+    <div class="pivot-top reveal">
+      <h2 class="section-heading">That changed the direction of the product</h2>
+    </div>
+    <div class="pivot-cols reveal">
+      <div class="pivot-col before">
+        <h4>Before</h4>
+        <p>Product receipts were financial instruments used to track product movement.</p>
+        <ul><li>Built around financing workflows</li><li>Designed primarily for banks</li><li>Functioned as a system of record</li></ul>
+      </div>
+      <div class="pivot-divider">
+        <div class="pivot-arrow">→</div>
+      </div>
+      <div class="pivot-col after">
+        <h4>After</h4>
+        <p>Product receipts became data nodes in a larger system, enabling:</p>
+        <ul><li>Operational visibility across stakeholders</li><li>Performance tracking for merchants</li><li>Decision support for the entire chain</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DISTRIBUTORS -->
+<section class="distro-section">
+  <div class="cw">
+    <div class="distro-grid reveal">
+      <div class="distro-text">
+        <div class="eyebrow">Distributor access</div>
+        <h2 class="section-heading">Meeting distributors where they are</h2>
+        <p>Not every distributor is comfortable using a dashboard. Some don't have laptops. Most are used to WhatsApp.</p>
+        <p>So we designed Flux Lite. A simplified mobile version focused entirely on pickups. Log in, request a pickup, get a code, show it at the depot. That's the whole thing.</p>
+      </div>
+      <div class="distro-img"><img src="flux-images/distributor-app.png" alt="Flux Lite distributor app"></div>
+    </div>
+  </div>
+</section>
+
+<!-- REFLECTIONS -->
+<section class="reflections">
+  <div class="cw-prose">
+    <div class="reveal">
+      <div class="eyebrow">Reflections</div>
+      <h2 class="section-heading">What this project changed for me</h2>
+
+      <blockquote>Design isn't just what it looks like. It's what gets adopted. And in this space, adoption is everything.</blockquote>
+
+      <p class="body-text">What started as an inventory financing tool turned into something broader. We weren't just enabling transactions. We were sitting on operational data that no one was using.</p>
+      <p class="body-text">Instead of continuing to optimize workflows, I focused on how the system could become an intelligence layer. One that supports visibility, insight, and decision making across the entire supply chain.</p>
+      <p class="body-text">That shift reshaped how I think about product design. The most impactful work isn't always about building more. Sometimes it's about recognizing what you've already built and seeing where it actually wants to go.</p>
+    </div>
+  </div>
+</section>
+
+<!-- NEXT -->
+<section class="cs-next">
+  <div class="cw">
+    <div class="cs-next-label">Next Project</div>
+    <a class="cs-next-link" href="fitnest.html">
+      <span class="cs-next-title">Fitnest</span>
+      <span class="cs-next-arrow">→</span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="cw">
+    <div class="footer-inner">
+      <a href="index.html">Sosa</a>
+      <p>© 2026 Sosa</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
+  });
+}, { threshold: 0.08 });
+reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
