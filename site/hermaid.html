@@ -150,6 +150,39 @@
   .prose-section { padding: 88px 0 0; }
   .prose-section + .prose-section { padding-top: 64px; }
 
+  /* STAT BAND (dark, full-width centred) */
+  .stat-band {
+    background: var(--bg-dark); color: var(--text-light);
+    padding: 80px 0;
+    text-align: center;
+  }
+
+  .stat-band .stat-number {
+    font-family: var(--display);
+    font-size: clamp(72px, 10vw, 120px);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--accent);
+    opacity: 0.9;
+    margin-bottom: 32px;
+  }
+
+  .stat-band .stat-context {
+    font-size: 17px;
+    line-height: 1.65;
+    color: rgba(240, 237, 232, 0.5);
+    max-width: 480px;
+    margin: 0 auto 24px;
+  }
+
+  .stat-band .stat-source {
+    font-size: 12px;
+    color: rgba(240, 237, 232, 0.5);
+    opacity: 0.5;
+    letter-spacing: 0.02em;
+  }
+
   /* CHALLENGE CARDS */
   .challenges { background: var(--bg-dark); color: var(--text-light); padding: 96px 0; }
 
@@ -328,6 +361,17 @@
       <h2 class="section-heading">A health space most products ignore</h2>
       <p class="body-text">Menopause affects every woman eventually, but it's still one of the most overlooked areas of healthcare. Symptoms like exhaustion, mood swings, and hormonal shifts can drastically affect daily life. Most women deal with them alone.</p>
       <p class="body-text">Hermaid wanted to change that by giving women access to specialists, self-guided courses, and symptom tracking tools. The vision was clear. The challenge was making all of these pieces feel like one product instead of four separate things bolted together.</p>
+    </div>
+  </div>
+</section>
+
+<!-- STAT BAND (dark) -->
+<section class="stat-band">
+  <div class="cw">
+    <div class="reveal">
+      <div class="stat-number">75%</div>
+      <p class="stat-context">of women report that menopause symptoms significantly impact their quality of life. Most go through it without any structured support.</p>
+      <div class="stat-source">MenoHealth, 2023</div>
     </div>
   </div>
 </section>
