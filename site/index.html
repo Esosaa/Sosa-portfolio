@@ -418,16 +418,6 @@
 
   .ps-img.active { opacity: 1; }
 
-  /* Fitnest screenshots are portrait phone screens — let them sit in the
-     landscape frame whole, with the app's light background filling the
-     letterbox so it reads as intentional rather than cropped. */
-  .project-card[href="fitnest.html"] .project-image-frame {
-    background: #F8F7F5;
-  }
-
-  .project-card[href="fitnest.html"] .ps-img {
-    object-fit: contain;
-  }
 
   /* ===== BUILDS (light) ===== */
   .builds-section {
@@ -693,19 +683,19 @@
       </div>
     </a>
 
-    <a class="project-card reveal" href="fitnest.html">
+    <a class="project-card reveal" href="hermaid.html">
       <div class="project-text">
         <div class="project-eyebrow">
           <span class="project-num">02</span>
-          <div class="project-tags-row"><span class="ptag">Mobile</span><span class="ptag">B2C</span><span class="ptag">User Research</span></div>
+          <div class="project-tags-row"><span class="ptag">Healthtech</span><span class="ptag">Fem-tech</span><span class="ptag">Web + Mobile</span></div>
         </div>
-        <h3 class="project-title">Fitnest</h3>
-        <p class="project-desc">A mobile platform that makes it easier to find and stick to healthy meals. Born from a personal problem, validated with real users.</p>
+        <h3 class="project-title">Hermaid</h3>
+        <p class="project-desc">A teleclinic platform for menopause care. I designed flows that brought together test kits, specialist consultations, symptom tracking, and courses into one coherent experience.</p>
         <div class="project-cta">Read case study <span class="cta-arrow">→</span></div>
       </div>
       <div class="project-image">
         <div class="project-image-frame">
-          <img class="ps-img active" src="fitnest-images/hero.png" alt="Fitnest hero">
+          <img class="ps-img active" src="hermaid-images/hero.png" alt="Hermaid platform overview">
         </div>
       </div>
     </a>
@@ -814,16 +804,13 @@ reveals.forEach(el => observer.observe(el));
       'flux-images/insights.png',
       'flux-images/distributor-app.png',
     ],
-    'fitnest.html': [
-      'fitnest-images/hero.png',
-      'fitnest-images/onboarding-1.png',
-      'fitnest-images/onboarding-2.png',
-      'fitnest-images/meal-discover-1.png',
-      'fitnest-images/meal-discover-2.png',
-      'fitnest-images/scheduled-meals-1.png',
-      'fitnest-images/scheduled-meals-2.png',
-      'fitnest-images/assistant-1.png',
-      'fitnest-images/assistant-2.png',
+    'hermaid.html': [
+      'hermaid-images/hero.png',
+      'hermaid-images/courses.png',
+      'hermaid-images/teleclinic.png',
+      'hermaid-images/symptom-tracking.png',
+      'hermaid-images/dashboard.png',
+      'hermaid-images/hormone-testing.png',
     ],
     'logigo.html': [
       'logigo-images/hero.png',
