@@ -130,107 +130,159 @@
   .hero {
     position: relative;
     overflow: hidden;
-    min-height: 92vh;
-    margin: 12px;
-    border-radius: 32px;
-    background: var(--bg-dark);
-    color: var(--text-light);
+    min-height: 95vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-end;
     padding-top: 120px;
     padding-bottom: 80px;
+    border-bottom: 1px solid var(--border-light);
   }
 
-  /* Hero runs full-bleed (not the 1080 column) so the name can span the
-     screen and the copy / tags sit hard against the gutters, ref-style. */
-  .hero > .container { position: relative; z-index: 2; max-width: none; }
+  .hero > .container { position: relative; z-index: 2; }
 
-  /* ===== HERO IMAGE TRAIL ===== */
-  /* The hero is calm at rest. As the cursor moves across it, work thumbnails
-     spawn at the pointer and fade out — an image-trail effect. Position is set
-     via left/top (instant, untransitioned) so reused thumbs never slide from
-     their previous spot; only scale + opacity animate. Disabled on touch /
-     reduced-motion / small screens (JS guards + media query below). */
-  .hero-trail {
+  /* ===== HERO ARC (full circle, center anchored at hero bottom) ===== */
+  /* Fade-in lives on the wrapper so the rotor's animation can start immediately
+     and stay in lockstep with the per-card counter-rotation. */
+  .arc-mask {
     position: absolute;
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    overflow: hidden;
+    opacity: 0;
+    animation: arcFadeIn 1s ease 0.5s forwards;
+    -webkit-mask-image: linear-gradient(to bottom, #000 85%, transparent 100%);
+            mask-image: linear-gradient(to bottom, #000 85%, transparent 100%);
   }
 
-  .trail-img {
+  .arc-container {
     position: absolute;
-    top: 0; left: 0;
-    width: 168px;
-    aspect-ratio: 1 / 1;
-    border-radius: 14px;
+    left: 50%;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    will-change: transform;
+    animation: spin 70s linear infinite;
+  }
+
+  .arc-card-slot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 180px;
+    height: 180px;
+    margin-left: -90px;
+    margin-top: -90px;
+    /* JS sets transform: translate(x, y) rotate(staticTiltRad) */
+  }
+
+  .arc-card {
+    width: 100%;
+    height: 100%;
+    background: #C4BEB5;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
     overflow: hidden;
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.6);
-    will-change: transform, opacity;
-    box-shadow: 0 14px 40px rgba(14, 14, 12, 0.18);
-    border: 1px solid rgba(14, 14, 12, 0.05);
+    will-change: transform;
+    /* Counter-rotate the rotor so each card's static tilt is preserved */
+    animation: counterSpin 70s linear infinite;
   }
 
-  .trail-img.visible {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.45s ease;
-  }
+  /* Cycle through 3 warm tones */
+  .arc-card-slot:nth-child(3n+1) .arc-card { background: #C4BEB5; }
+  .arc-card-slot:nth-child(3n+2) .arc-card { background: #B8AFA3; }
+  .arc-card-slot:nth-child(3n)   .arc-card { background: #D0C9C0; }
 
-  .trail-img.hide {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.88);
-    transition: transform 0.6s ease, opacity 0.6s ease;
-  }
-
-  .trail-img img {
+  .arc-card img {
     width: 100%;
     height: 100%;
     display: block;
     object-fit: cover;
+    filter: sepia(0.3) saturate(0.7) brightness(0.95);
+    opacity: 0.85;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  @keyframes counterSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(-360deg); }
+  }
+
+  @keyframes arcFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .arc-container, .arc-card { animation: none !important; }
+  }
+
+  .hero-eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 32px;
+    opacity: 0; animation: fadeUp 0.7s ease 0.2s forwards;
   }
 
   .hero-title {
     font-family: var(--display);
-    font-size: clamp(46px, 11vw, 150px);
-    line-height: 0.98; letter-spacing: -0.03em;
+    font-size: clamp(48px, 5.5vw, 72px);
+    line-height: 1.05; letter-spacing: -0.03em;
     font-weight: 400;
-    color: var(--text-light);
-    white-space: nowrap;
-    margin-bottom: 36px;
-    opacity: 0; animation: fadeUp 0.7s ease 0.3s forwards;
+    margin-bottom: 48px;
+    opacity: 0; animation: fadeUp 0.7s ease 0.4s forwards;
   }
+
+  .hero-title em { font-style: italic; }
 
   .hero-bottom {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: flex-end;
     gap: 40px;
-    opacity: 0; animation: fadeUp 0.7s ease 0.5s forwards;
+    opacity: 0; animation: fadeUp 0.7s ease 0.6s forwards;
   }
 
   .hero-subtitle {
-    font-size: 16px; font-weight: 400; line-height: 1.6;
-    color: rgba(240,237,232,0.82); max-width: 400px;
+    font-size: 17px; font-weight: 400; line-height: 1.7;
+    color: var(--text-body); max-width: 440px;
   }
 
-  .hero-tags {
-    display: flex; flex-direction: column;
-    gap: 2px; text-align: right; flex-shrink: 0;
+  .hero-ctas {
+    display: flex; gap: 16px; align-items: center; flex-shrink: 0;
   }
 
-  .hero-tags span {
-    font-size: 15px; font-weight: 400; line-height: 1.55;
-    color: var(--text-light-muted); letter-spacing: -0.01em;
+  .btn-primary {
+    padding: 14px 32px; background: var(--text-dark); color: var(--text-light);
+    font-family: var(--body); font-size: 12px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none;
+    border: none; cursor: pointer; border-radius: var(--radius);
+    transition: all 0.3s ease;
   }
 
-  /* ===== WORK (light) ===== */
+  .btn-primary:hover { background: #2A2724; transform: translateY(-1px); }
+
+  .btn-ghost {
+    padding: 14px 0; background: none; color: var(--text-body);
+    font-family: var(--body); font-size: 12px; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none;
+    border: none; cursor: pointer; transition: color 0.3s ease;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .btn-ghost:hover { color: var(--text-dark); }
+  .btn-ghost .arrow { transition: transform 0.3s ease; }
+  .btn-ghost:hover .arrow { transform: translateX(4px); }
+
+  /* ===== WORK (dark) ===== */
   .work-section {
-    background: var(--bg-light);
-    color: var(--text-dark);
+    background: var(--bg-dark);
+    color: var(--text-light);
     padding: 120px 0;
   }
 
@@ -241,7 +293,7 @@
     gap: 40px;
     margin-bottom: 80px;
     padding-bottom: 40px;
-    border-bottom: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-dark);
   }
 
   .work-header h2 {
@@ -250,7 +302,7 @@
   }
 
   .work-header p {
-    font-size: 15px; color: var(--text-muted); font-weight: 300;
+    font-size: 15px; color: var(--text-light-muted); font-weight: 300;
     line-height: 1.7; max-width: 360px; text-align: right;
   }
 
@@ -259,13 +311,13 @@
     grid-template-columns: 1fr 1fr;
     gap: 40px;
     text-decoration: none; color: inherit;
-    border-top: 1px solid var(--border-light);
+    border-top: 1px solid var(--border-dark);
     padding: 40px;
     transition: all 0.4s ease;
     position: relative;
   }
 
-  .project-card:last-child { border-bottom: 1px solid var(--border-light); }
+  .project-card:last-child { border-bottom: 1px solid var(--border-dark); }
 
   /* Hover background sits inside the padding so it's inset from the dividers,
      and gets rounded corners — instead of the card itself painting edge-to-edge. */
@@ -280,7 +332,7 @@
     pointer-events: none;
   }
 
-  .project-card:hover::before { background: var(--bg-mid); }
+  .project-card:hover::before { background: var(--bg-dark-card); }
 
   .project-text {
     position: relative;
@@ -303,14 +355,14 @@
   .ptag {
     font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
     text-transform: uppercase; padding: 3px 10px;
-    border: 1px solid var(--border-light); border-radius: var(--radius);
-    color: rgba(14,14,12,0.4);
+    border: 1px solid var(--border-dark); border-radius: var(--radius);
+    color: rgba(240,237,232,0.35);
     transition: all 0.4s ease;
   }
 
   .project-card:hover .ptag {
-    border-color: rgba(14,14,12,0.2);
-    color: var(--text-body);
+    border-color: var(--border-dark-hover);
+    color: rgba(240,237,232,0.5);
   }
 
   .project-title {
@@ -320,13 +372,13 @@
 
   .project-desc {
     font-size: 15px; font-weight: 300;
-    color: var(--text-muted); line-height: 1.65;
+    color: var(--text-light-muted); line-height: 1.65;
     max-width: 400px;
   }
 
   .project-cta {
     font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
-    text-transform: uppercase; color: rgba(14,14,12,0.35);
+    text-transform: uppercase; color: rgba(240,237,232,0.3);
     display: flex; align-items: center; gap: 6px;
     margin-top: 8px; transition: all 0.4s ease;
   }
@@ -345,21 +397,21 @@
   .project-image-frame {
     position: relative;
     width: 100%; aspect-ratio: 16/10;
-    background: var(--bg-mid);
-    border: 1px solid var(--border-light);
+    background: var(--bg-dark-card);
+    border: 1px solid var(--border-dark);
     border-radius: var(--radius);
     display: flex; align-items: center; justify-content: center;
     overflow: hidden; transition: all 0.4s ease;
   }
 
   .project-card:hover .project-image-frame {
-    border-color: rgba(14,14,12,0.18);
-    box-shadow: 0 16px 48px rgba(14,14,12,0.15);
+    border-color: var(--border-dark-hover);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.4);
     transform: translateY(-4px);
   }
 
   .project-image-frame span {
-    font-size: 12px; color: rgba(14,14,12,0.18);
+    font-size: 12px; color: rgba(240,237,232,0.15);
     letter-spacing: 0.1em; text-transform: uppercase;
   }
 
@@ -565,9 +617,8 @@
   @media (max-width: 900px) {
     :root { --gutter: 28px; }
     .hero { padding-top: 140px; padding-bottom: 60px; }
-    .hero-title { white-space: normal; }
-    .hero-bottom { flex-direction: column; align-items: flex-start; gap: 24px; }
-    .hero-tags { text-align: left; }
+    .arc-mask { display: none; }
+    .hero-bottom { flex-direction: column; align-items: flex-start; gap: 32px; }
     .work-header, .builds-header { flex-direction: column; align-items: flex-start; }
     .work-header p, .builds-header p { text-align: left; }
     .project-card { grid-template-columns: 1fr; padding: 32px; }
@@ -580,18 +631,18 @@
 
   @media (max-width: 600px) {
     :root { --gutter: 20px; }
-    /* On phones the trail is disabled — collapse the tall hero so the page
+    /* On phones the arc is hidden — drop the bottom-anchor so the page
        opens to text instead of a near-blank screen of hero space. */
     .hero {
       min-height: auto;
-      margin: 8px;
-      border-radius: 22px;
       padding-top: 120px;
       padding-bottom: 64px;
       justify-content: flex-start;
     }
+    .hero-ctas { flex-direction: column; align-items: flex-start; }
     .about-attributes { grid-template-columns: 1fr; }
-    .nav-links a { padding: 7px 12px; font-size: 12px; }
+    .nav-links { gap: 12px; }
+    .nav-links a { font-size: 10px; }
   }
 </style>
 <!-- Google tag (gtag.js) -->
@@ -618,15 +669,17 @@
 </nav>
 
 <section class="hero">
-  <div class="hero-trail" id="heroTrail" aria-hidden="true"></div>
+  <div class="arc-mask" aria-hidden="true">
+    <div class="arc-container" id="heroArc"></div>
+  </div>
   <div class="container">
-    <h1 class="hero-title">Esosa Etiosasere</h1>
+    <div class="hero-eyebrow">Product Design & Strategy</div>
+    <h1 class="hero-title">Complex systems,<br><em>clear products.</em></h1>
     <div class="hero-bottom">
-      <p class="hero-subtitle">Product designer turning complex fintech and logistics systems into products worth trusting.</p>
-      <div class="hero-tags">
-        <span>web products</span>
-        <span>b2b saas</span>
-        <span>fintech</span>
+      <p class="hero-subtitle">I work in fintech, logistics, and operations. The kind of spaces where things break if the design doesn't hold up. I lead the process from research to delivery.</p>
+      <div class="hero-ctas">
+        <a href="#work" class="btn-primary">Selected Work</a>
+        <a href="mailto:esosa.edogun@gmail.com" class="btn-ghost">Get in touch <span class="arrow">→</span></a>
       </div>
     </div>
   </div>
@@ -855,67 +908,58 @@ reveals.forEach(el => observer.observe(el));
   });
 })();
 
-// Hero image trail: thumbnails of past work spawn at the cursor as it moves
-// across the hero, then fade out. A fixed pool of 14 <div.trail-img> is reused
-// in rotation, so the DOM never grows. Each spawn is repositioned via left/top
-// (instant) before the visible/hide classes animate scale + opacity.
-(function heroImageTrail() {
-  const hero = document.querySelector('.hero');
-  const trail = document.getElementById('heroTrail');
-  if (!hero || !trail) return;
+// Hero arc: full circle of 16 cards, center anchored at hero bottom.
+// Only the upper hemisphere is visible (lower half clipped by .hero overflow:hidden).
+// The container spins continuously; each card has a static rotate(-angle) per the spec.
+(function buildHeroArc() {
+  const container = document.getElementById('heroArc');
+  if (!container) return;
 
-  // No mouse, reduced motion, or small screens → leave the hero clean and static.
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  if (window.matchMedia('(hover: none)').matches) return;
-  if (window.innerWidth < 900) return;
+  const totalCards = 14;
+  const cardSize = 180;
+  // Minimum radius so 14 cards of this size don't overlap on the circle
+  // (chord between adjacent cards must exceed cardSize, plus a small visual gap).
+  const minRadius = (cardSize + 18) / (2 * Math.sin(Math.PI / totalCards));
 
-  const total = 14;
-  const pool = [];
-  for (let i = 0; i < total; i++) {
-    const el = document.createElement('div');
-    el.className = 'trail-img';
-    const img = document.createElement('img');
-    img.src = `arc-images/${i + 1}.png`;
-    img.alt = '';
-    img.decoding = 'async';
-    el.appendChild(img);
-    trail.appendChild(el);
-    pool.push(el);
+  function getRadius() {
+    return Math.max(minRadius, Math.min(window.innerWidth * 0.48, 650));
   }
 
-  const threshold = 90;   // px of cursor travel between spawns
-  let lastX = 0, lastY = 0, hasLast = false;
-  let imgIndex = 0, zCounter = 1;
+  // Each card's slot is pure translation (no rotation). The card itself
+  // counter-rotates the rotor at the same speed via CSS, so the image's
+  // visual orientation stays at 0° throughout the spin: upright always.
+  function build() {
+    const radius = getRadius();
+    container.innerHTML = '';
+    for (let i = 0; i < totalCards; i++) {
+      const angle = (2 * Math.PI / totalCards) * i;
+      const x = Math.cos(angle) * radius;
+      const y = Math.sin(angle) * radius;
 
-  const showImage = (x, y) => {
-    const el = pool[imgIndex % total];
-    imgIndex++;
-    // Reset to base (untransitioned) before repositioning so a reused thumb
-    // never slides across the hero from its previous location.
-    el.classList.remove('visible', 'hide');
-    el.style.left = x + 'px';
-    el.style.top = y + 'px';
-    el.style.zIndex = zCounter++;
-    void el.offsetWidth; // force reflow so the reset applies before the transition
-    el.classList.add('visible');
-    clearTimeout(el._hideTimer);
-    el._hideTimer = setTimeout(() => {
-      el.classList.remove('visible');
-      el.classList.add('hide');
-    }, 600);
-  };
+      const slot = document.createElement('div');
+      slot.className = 'arc-card-slot';
+      slot.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px)`;
 
-  hero.addEventListener('mousemove', (e) => {
-    const rect = hero.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    if (!hasLast) { lastX = x; lastY = y; hasLast = true; return; }
-    if (Math.hypot(x - lastX, y - lastY) < threshold) return;
-    lastX = x; lastY = y;
-    showImage(x, y);
+      const card = document.createElement('div');
+      card.className = 'arc-card';
+
+      const img = document.createElement('img');
+      img.src = `arc-images/${(i % 14) + 1}.png`;
+      img.alt = '';
+      img.decoding = 'async';
+      card.appendChild(img);
+
+      slot.appendChild(card);
+      container.appendChild(slot);
+    }
+  }
+
+  build();
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(build, 150);
   });
-
-  hero.addEventListener('mouseleave', () => { hasLast = false; });
 })();
 </script>
 
