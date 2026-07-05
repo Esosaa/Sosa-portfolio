@@ -529,6 +529,57 @@
     .artifact-card { padding: 24px; }
   }
 
+  /* ===== CASIAN DESIGN SYSTEM ===== */
+  .casian-section {
+    padding: 128px 0;
+    border-top: 1px solid var(--border-light);
+    background: var(--bg-light);
+  }
+
+  .casian-intro {
+    max-width: var(--prose-w);
+    margin-bottom: 72px;
+  }
+
+  .casian-intro .section-heading {
+    font-family: var(--display);
+    font-size: clamp(30px, 3.4vw, 44px);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+    margin-bottom: 24px;
+  }
+
+  .casian-figure {
+    margin: 0;
+  }
+
+  .casian-figure img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 6px;
+  }
+
+  .casian-caption {
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.01em;
+    text-align: center;
+    margin-top: 28px;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 900px) {
+    .casian-section { padding: 96px 0; }
+    .casian-intro { margin-bottom: 48px; }
+  }
+
+  @media (max-width: 600px) {
+    .casian-section { padding: 72px 0; }
+    .casian-caption { font-size: 12px; }
+  }
+
   /* ANIMATIONS */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(24px); }
@@ -667,6 +718,22 @@
       <img class="artifact-img" src="flux-images/flux-user-flow.png" alt="User flow diagram">
       <p class="artifact-caption">System flow mapping stakeholder journeys through the Flux platform</p>
     </div>
+  </div>
+</section>
+
+<!-- CASIAN DESIGN SYSTEM -->
+<section class="casian-section">
+  <div class="cw">
+    <div class="casian-intro reveal">
+      <div class="eyebrow">Design System</div>
+      <h2 class="section-heading">Building Casian</h2>
+      <p class="body-text">But before jumping into design, we had to define our design system and ethos, and that's how <strong>Casian</strong> was born.</p>
+      <p class="body-text"><strong>Casian</strong> became Flux's scalable design foundation: reusable UI components, documented interaction patterns, and shared standards that kept designers and engineers aligned while supporting increasingly complex enterprise workflows.</p>
+    </div>
+    <figure class="casian-figure reveal">
+      <img src="flux-images/casian-design-system.png" alt="Casian design system — color scales, components, typography, and data visualization">
+      <figcaption class="casian-caption">Reusable components • Component libraries • Documentation • Interaction patterns • Data visualization • UI standards</figcaption>
+    </figure>
   </div>
 </section>
 
