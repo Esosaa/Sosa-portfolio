@@ -1,0 +1,5 @@
+# Plain static HTML, no build step. index.html lives at the repo root, so the
+# publish directory is the root — not site/, which is where an earlier version
+# of the homepage used to live.
+[build]
+  publish = "."
