@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CarePlan 365 — Everything that has to happen for one therapy session | Esosa Etiosasere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=tanker@400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFFDF0; --cream-2:#F6F3E4; --ink:#191919; --body:#555047;
+    --red:#BC532F; --red-soft:#E08B63; --grey:#8F8F8F;
+    --hair:rgba(25,25,25,.14); --hair-d:rgba(255,253,240,.12); --paper:#FBF7E8;
+    --f:'Geist',-apple-system,sans-serif; --m:'Geist Mono',ui-monospace,monospace;
+    --s:'Instrument Serif',Georgia,serif;
+    --a:'Geist',-apple-system,sans-serif;
+    --d:'Tanker','Arial Black',sans-serif;
+    --ride:70vh; --col:1000px; --gut:clamp(1.5rem,7vw,7rem); --sec:clamp(5rem,10vw,8rem);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--cream);color:var(--ink);font-family:var(--f);font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  ::selection{background:var(--red);color:#fff}
+  /* height:auto is required — the hero <img> carries width/height attributes
+     for layout stability, and without it the intrinsic height wins and the
+     image stretches. */
+  img{max-width:100%;height:auto;display:block}
+  a{color:inherit}
+  .cw{width:100%;max-width:calc(var(--col) + var(--gut)*2);margin-inline:auto;padding-inline:var(--gut)}
+  .wide{width:100%;max-width:calc(1280px + var(--gut)*2);margin-inline:auto;padding-inline:var(--gut)}
+  /* sized to land on 26px at 390, 28px at 768 and 44px from 1207 up */
+  h2{font-family:var(--f);font-weight:500;font-size:clamp(1.625rem,3.65vw,2.75rem);line-height:1.08;letter-spacing:-.03em;max-width:18ch}
+  h3{font-family:var(--f);font-weight:500;font-size:calc(1.0625rem - 4px);line-height:1.35;letter-spacing:-.01em}
+  .display{font-family:var(--d);font-weight:400;text-transform:uppercase;letter-spacing:-.012em;line-height:.9}
+  .mono{font-family:var(--m);font-size:.6875rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;line-height:1.3}
+  .grey{color:var(--grey)}
+  /* text-wrap:pretty stops single-word orphans; balance evens out headings */
+  p{max-width:58ch;text-wrap:pretty}
+  h2,h3,h4,.say,.pull,.trans,.lede,.insight{text-wrap:balance}
+  .p{color:var(--body);margin-bottom:1.2rem;max-width:52ch}
+  .p:last-child{margin-bottom:0}
+  .p b{color:var(--ink);font-weight:500}
+  .dark .p{color:rgba(255,253,240,.7)} .dark .p b{color:var(--cream)}
+  .lede{font-size:clamp(1rem,1.72vw,1.175rem);line-height:1.55;letter-spacing:-.012em;color:var(--body);max-width:44ch;margin-top:1.5rem}
+  .dark .lede{color:rgba(255,253,240,.72)}
+  .say{font-family:var(--a);font-weight:500;font-size:clamp(1.45rem,2.8vw,2.05rem);line-height:1.3;letter-spacing:-.025em;color:var(--red);max-width:26ch}
+  .dark .say{color:var(--red-soft)}
+  .pull{font-family:var(--a);font-weight:500;font-size:clamp(1.9rem,4.2vw,3rem);line-height:1.18;letter-spacing:-.03em;max-width:20ch}
+  section{padding:var(--sec) 0}
+  .dark{background:#111;color:var(--cream)}
+  .clay{background:var(--cream-2)}
+  .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(2rem,5vw,4rem);align-items:start}
+  @media (max-width:820px){.two{grid-template-columns:1fr;gap:1.6rem}}
+
+  .stagevh{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-block:clamp(4rem,9vw,7rem)}
+  .bleed{--bw:min(1280px,calc(100vw - var(--gut)*2));width:var(--bw);margin-inline:calc((100% - var(--bw))/2)}
+  .scene{font-family:var(--m);font-size:.625rem;font-weight:500;letter-spacing:.26em;text-transform:uppercase;color:var(--red);margin-bottom:1.3rem}
+  .dark .scene{color:var(--red-soft)}
+  .note{font-family:var(--m);font-size:.625rem;letter-spacing:.14em;text-transform:uppercase;line-height:1.9;color:var(--grey);padding-top:1.1rem;max-width:64ch}
+  .dark .note{color:rgba(255,253,240,.42)}
+  .note b{color:var(--red);font-weight:500} .dark .note b{color:var(--red-soft)}
+  .beatgap{margin-top:clamp(3rem,7vw,5.5rem)}
+  /* the transition line that hands one scene to the next */
+  .trans{font-family:var(--a);font-weight:500;font-size:clamp(1.2rem,2.3vw,1.6rem);line-height:1.35;letter-spacing:-.022em;
+    color:var(--red);max-width:28ch;margin-top:clamp(2.8rem,6vw,4.5rem);padding-top:1.7rem;border-top:1px solid var(--hair)}
+  .dark .trans{color:var(--red-soft);border-color:var(--hair-d)}
+  .sub{border-top:1px solid var(--hair);padding-top:clamp(1.6rem,3.5vw,2.4rem);margin-top:clamp(2.5rem,5vw,3.5rem)}
+  .dark .sub{border-color:var(--hair-d)}
+  .sub .k{font-family:var(--m);font-size:.5625rem;letter-spacing:.2em;text-transform:uppercase;color:var(--grey);margin-bottom:1rem}
+  .dark .sub .k{color:rgba(255,253,240,.38)}
+  /* the short stacked lists in the copy */
+  .beats{margin-top:1.4rem}
+  .beats p{font-size:.95rem;line-height:1.9;color:var(--body);max-width:44ch}
+  .dark .beats p{color:rgba(255,253,240,.7)}
+
+  /* ── the four gates a session has to clear ── */
+  .gates{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.5rem;margin-top:clamp(2rem,4vw,3rem)}
+  @media (max-width:860px){.gates{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:460px){.gates{grid-template-columns:1fr}}
+  .gate{border:1px solid var(--hair);border-top:2px solid var(--red);padding:clamp(1rem,2.4vw,1.4rem);
+    display:flex;flex-direction:column;min-height:10rem;
+    opacity:0;transform:translateY(10px);transition:opacity .6s ease,transform .6s ease}
+  .gates.on .gate{opacity:1;transform:none}
+  .gates.on .gate:nth-child(2){transition-delay:.1s} .gates.on .gate:nth-child(3){transition-delay:.2s}
+  .gates.on .gate:nth-child(4){transition-delay:.3s}
+  .dark .gate{border-color:var(--hair-d);border-top-color:var(--red-soft)}
+  .gate .n{font-family:var(--m);font-size:.5rem;letter-spacing:.18em;color:var(--red)}
+  .dark .gate .n{color:var(--red-soft)}
+  .gate .q{font-family:var(--a);font-weight:500;font-size:clamp(.95rem,1.7vw,1.1rem);line-height:1.3;
+    letter-spacing:-.015em;margin-top:.9rem;max-width:none}
+  .gate .f{font-family:var(--m);font-size:.5rem;letter-spacing:.16em;text-transform:uppercase;color:var(--grey);
+    margin-top:auto;padding-top:1rem;border-top:1px solid var(--hair)}
+  .dark .gate .f{color:rgba(255,253,240,.4);border-top-color:var(--hair-d)}
+
+  /* ── the financial rules a session carries ── */
+  .rulegrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4rem;margin-top:1.4rem}
+  @media (max-width:520px){.rulegrid{grid-template-columns:1fr}}
+  .rulegrid span{border:1px solid var(--hair-d);padding:.85rem .9rem;font-family:var(--m);font-size:.5625rem;
+    letter-spacing:.14em;text-transform:uppercase;color:rgba(255,253,240,.7)}
+
+  /* ── what happens to a note after the room empties ── */
+  .afterline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(.8rem,2vw,1.4rem);
+    margin-top:clamp(2rem,4vw,3rem);padding-top:1.6rem;position:relative}
+  @media (max-width:860px){.afterline{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:460px){.afterline{grid-template-columns:1fr}}
+  .afterline::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:var(--hair)}
+  .al{position:relative;padding-top:1.4rem;opacity:0;transform:translateY(10px);
+    transition:opacity .6s ease,transform .6s ease}
+  .afterline.on .al{opacity:1;transform:none}
+  .afterline.on .al:nth-child(2){transition-delay:.12s} .afterline.on .al:nth-child(3){transition-delay:.24s}
+  .afterline.on .al:nth-child(4){transition-delay:.36s}
+  .al::before{content:"";position:absolute;top:-4px;left:0;width:7px;height:7px;background:var(--red);transform:rotate(45deg)}
+  .al .t{font-family:var(--m);font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--red)}
+  .al .v{font-size:clamp(.95rem,1.7vw,1.05rem);line-height:1.4;color:var(--body);margin-top:.7rem;max-width:none}
+
+  /* Headings run 4px below the base scale on this page; the hero h1 is exempt. */
+  /* ── hero ── */
+  .hero{padding-block:clamp(8rem,17vh,11rem) 0}
+  .hero .mono{max-width:none}
+  /* two deliberate lines — the <br> holds them; the size is set so the
+     longer serif line still fits the column at every width */
+  .hero h1{font-size:clamp(1.75rem,5.2vw,4.25rem);line-height:1.02;margin-top:.6rem;max-width:none}
+  /* serif italic as the accent inside display type — the same move the
+     homepage makes with its identity glyph */
+  .hero h1 .em{font-family:var(--s);font-style:italic;font-weight:400;text-transform:none;
+    letter-spacing:-.01em;color:var(--red);font-size:1.06em}
+  .hero .dek{margin-top:1.6rem;max-width:48ch;font-size:.95rem;color:var(--body)}
+  .meta{display:flex;flex-wrap:wrap;gap:2.4rem;margin-top:clamp(2.5rem,5vw,3.5rem)}
+  .meta dt{font-family:var(--m);font-size:.625rem;letter-spacing:.18em;text-transform:uppercase;color:var(--grey);margin-bottom:.35rem}
+  .meta dd{font-size:.85rem}
+  /* hero image band — copy above, image rises underneath on scroll */
+  .shot{margin-top:clamp(3rem,6vw,4.5rem);background:#111;padding:clamp(2rem,5vw,4.5rem) 0;overflow:hidden}
+  .shot img{border:1px solid var(--hair-d);will-change:transform}
+  /* used only while the real hero image is pending */
+  .shot .slot{margin-top:0}
+
+  /* ── recorded prototypes ────────────────────────────────────────────
+     Each recording carries its own near-black bezel, so the stage is kept
+     near-black on every section — the bezel disappears into it and the
+     warm CarePlan UI reads as a lit screen. */
+  .vproto{margin-top:clamp(1.75rem,3.5vw,2.5rem);background:#0A0A0A;border:1px solid rgba(255,253,240,.11);position:relative}
+  .vproto + .vproto{margin-top:clamp(1rem,2vw,1.4rem)}
+  .vproto-hd{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;padding:.85rem 1.1rem;border-bottom:1px solid rgba(255,253,240,.11)}
+  .vproto-hd .t{font-family:var(--m);font-size:.5625rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,253,240,.45)}
+  .vproto-hd .live{display:flex;align-items:center;gap:.45rem;color:var(--red-soft)}
+  .vproto-hd .live i{width:5px;height:5px;border-radius:50%;background:var(--red-soft);animation:pulse 2.4s ease-in-out infinite}
+  .vstage{position:relative;padding:clamp(.9rem,2.6vw,1.9rem);overflow:hidden}
+  .vstage::before{content:"";position:absolute;inset:0;background:radial-gradient(75% 60% at 50% 0%,rgba(224,139,99,.16),rgba(224,139,99,0) 68%);pointer-events:none}
+  .vproto video{position:relative;display:block;width:100%;height:auto;background:#000;box-shadow:0 34px 70px rgba(0,0,0,.6)}
+  .vcap{font-family:var(--m);font-size:.625rem;letter-spacing:.05em;line-height:1.7;color:rgba(255,253,240,.5);max-width:74ch;padding:0 clamp(.9rem,2.6vw,1.9rem) clamp(1.1rem,2.4vw,1.5rem)}
+  .vcap b{color:var(--red-soft);font-weight:500}
+  @media (prefers-reduced-motion:reduce){.vproto-hd .live i{animation:none}}
+
+  /* ── placeholder for a real product surface ── */
+  .slot{margin-top:clamp(1.75rem,3.5vw,2.5rem);border:1px dashed var(--hair);padding:clamp(1.5rem,4vw,2.4rem);background:rgba(25,25,25,.015)}
+  .dark .slot{border-color:rgba(255,253,240,.2);background:rgba(255,253,240,.02)}
+  .slot .k{font-family:var(--m);font-size:.5625rem;letter-spacing:.18em;text-transform:uppercase;color:var(--red)}
+  .dark .slot .k{color:var(--red-soft)}
+  .slot h4{font-family:var(--f);font-weight:500;font-size:calc(1.0625rem - 4px);letter-spacing:-.01em;margin:.9rem 0 .45rem}
+  .slot p{font-size:.85rem;color:var(--body);max-width:58ch}
+  .dark .slot p{color:rgba(255,253,240,.6)}
+  .slot .ratio{margin-top:1.4rem;border:1px solid var(--hair);aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;font-family:var(--m);font-size:.5625rem;letter-spacing:.18em;text-transform:uppercase;color:var(--grey);
+    background:repeating-linear-gradient(45deg,transparent 0 9px,rgba(25,25,25,.028) 9px 18px)}
+  .dark .slot .ratio{border-color:rgba(255,253,240,.14);color:rgba(255,253,240,.3);background:repeating-linear-gradient(45deg,transparent 0 9px,rgba(255,253,240,.03) 9px 18px)}
+  .slot .ratio.tall{aspect-ratio:16/10}
+
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+
+  /* ── SCENE 2 · the invisible system ── */
+  /* the session on top, the three stages it moves through beneath it */
+  .orbit{--drop:clamp(1.6rem,4vh,2.6rem);max-width:840px;margin-inline:auto}
+  .core{max-width:360px;margin-inline:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    border:1px solid var(--red);background:#1A100C;text-align:center;padding:clamp(1.4rem,3.5vh,2.2rem) 1rem;
+    box-shadow:0 0 0 1px rgba(188,83,47,.25),0 0 60px rgba(224,139,99,.22);animation:core 4.5s ease-in-out infinite}
+  .stem{width:1px;height:var(--drop);background:rgba(255,253,240,.16);margin-inline:auto}
+  .nodes{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:clamp(.6rem,1.8vw,1.1rem);padding-top:var(--drop)}
+  /* the rail the three stages hang from */
+  .nodes::before{content:"";position:absolute;top:0;left:16.66%;right:16.66%;height:1px;background:rgba(255,253,240,.16)}
+  .node::after{content:"";position:absolute;top:calc(-1 * var(--drop));left:50%;width:1px;height:var(--drop);
+    background:rgba(255,253,240,.16)}
+  @keyframes core{0%,100%{box-shadow:0 0 0 1px rgba(188,83,47,.25),0 0 60px rgba(224,139,99,.2)}
+                  50%{box-shadow:0 0 0 1px rgba(188,83,47,.4),0 0 90px rgba(224,139,99,.34)}}
+  .core .l{font-family:var(--m);font-size:.5625rem;letter-spacing:.2em;text-transform:uppercase;color:var(--red-soft)}
+  .core .n{font-family:var(--f);font-weight:500;font-size:clamp(1rem,1.9vw,1.25rem);color:var(--cream);letter-spacing:-.02em;margin-top:.6rem;line-height:1.2}
+  .node{position:relative;display:flex;align-items:center;justify-content:center;border:1px solid var(--hair-d);background:#141414;
+    min-height:clamp(5rem,11vh,7rem);
+    font-family:var(--m);font-size:.625rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,253,240,.5);
+    cursor:default;transition:border-color .35s ease,color .35s ease,background .35s ease;padding:1rem .6rem;text-align:center}
+  .node:hover,.node:focus-visible{border-color:var(--red-soft);color:var(--red-soft);background:#1A100C;animation:npulse 1.5s ease-in-out infinite}
+  @keyframes npulse{0%,100%{box-shadow:0 0 0 0 rgba(224,139,99,.28)}50%{box-shadow:0 0 0 7px rgba(224,139,99,0)}}
+  @media (max-width:640px){
+    .nodes{grid-template-columns:1fr;gap:.5rem;padding-top:0}
+    .nodes::before,.node::after,.stem{display:none}
+    .nodes{margin-top:1rem}
+  }
+
+  /* ── SCENE 4 · the freeze frame ── */
+  .freeze{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem;align-items:stretch}
+  @media (max-width:720px){.freeze{grid-template-columns:1fr}}
+  .fz{border:1px solid var(--hair-d);background:#171717;padding:clamp(1.1rem,2.6vw,1.6rem);min-height:11rem;
+    display:flex;flex-direction:column;justify-content:space-between;opacity:.28;transition:opacity .7s ease,border-color .7s ease}
+  .fz.in{opacity:1}
+  .fz .k{font-family:var(--m);font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,253,240,.35);margin-bottom:1.4rem}
+  .fz .v{font-size:.85rem;color:var(--cream);line-height:1.45}
+  .fz.out{border-style:dashed;border-color:rgba(224,139,99,.55);background:#140D0A}
+  .fz.out .k{color:var(--red-soft)} .fz.out .v{color:var(--red-soft)}
+  .fz .tagline{font-family:var(--m);font-size:.5rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,253,240,.28);margin-top:1.1rem}
+  .fz.out .tagline{color:rgba(224,139,99,.75)}
+
+  figure{margin:0}
+  #bar{position:fixed;top:0;left:0;height:2px;width:0;background:var(--red);z-index:90}
+  nav{position:fixed;top:0;left:0;right:0;z-index:85;padding:1.1rem 0;background:rgba(255,253,240,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--hair);transition:background .4s,border-color .4s}
+  body.on-dark nav{background:rgba(17,17,17,.86);border-color:var(--hair-d)}
+  .navrow{display:flex;justify-content:space-between;align-items:center}
+  .wm{text-decoration:none;font-weight:500;font-size:.95rem;transition:color .4s}
+  .wm .g{font-family:var(--s);font-style:italic;color:var(--red)}
+  body.on-dark .wm{color:var(--cream)}
+  .back{font-family:var(--m);font-size:.6875rem;letter-spacing:.18em;text-transform:uppercase;color:var(--grey);text-decoration:none;padding:.6rem 0}
+  .back:hover{color:var(--red)}
+  body.on-dark .back{color:rgba(255,253,240,.5)}
+  .next{background:#111;color:var(--cream)}
+  .nrow{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;flex-wrap:wrap;padding:var(--sec) 0 clamp(3rem,6vw,4rem)}
+  .nrow a{text-decoration:none}
+  .nrow .display{font-size:clamp(2.2rem,6vw,4.4rem)}
+  .nrow a:hover .display{color:var(--red-soft)}
+  .cp{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;border-top:1px solid var(--hair-d);padding:1.4rem 0 3rem;color:rgba(255,253,240,.45);font-size:.8125rem}
+  .cp a{text-decoration:none}
+  .rv{opacity:0;transform:translateY(22px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+  .rv.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .rv,.gs{opacity:1;transform:none;transition:none}
+    .prop{opacity:1;transform:none}
+    .core,.node:hover,.p-hd .live i{animation:none}
+    .sr.flash{animation:none}
+    .fz{opacity:1}
+  }
+  .is-hidden{display:none}
+  :focus-visible{outline:2px solid var(--red);outline-offset:3px}
+  .dark :focus-visible{outline-color:var(--red-soft)}
+
+  /* ── a dark section rides up over the light one before it ──
+     the outgoing block is wrapped in .ru, which carries --ride of slack below it.
+     the block pins at the viewport bottom for exactly that distance while the dark
+     block — pulled back up by the same amount — scrolls over it, then releases.
+     the slack must be bounded: an unwrapped sticky bottom:0 glues the block to the
+     viewport for the rest of the document. */
+  .ru{position:relative}
+  /* the slack has to be a real box inside .ru: sticky is clamped to the
+     containing block's CONTENT box, so padding-bottom gives it nothing to move in */
+  .rugap{height:var(--ride)}
+  /* `top` is set per element in JS: 100vh - its own height, so it pins exactly
+     when its bottom reaches the viewport bottom. bottom:0 sticky does not do this. */
+  .rideunder{position:sticky}
+  .rideover{margin-top:calc(var(--ride) * -1);box-shadow:0 -26px 60px rgba(0,0,0,.45)}
+  @media (prefers-reduced-motion:reduce){
+    .rugap{height:0}
+    .rideunder{position:static}
+    .rideover{margin-top:0;box-shadow:none}
+  }
+
+
+  /* the hero's 17vh top padding keeps growing on tall phones — hold it to a
+     steady ~40-56px below the fixed nav instead. */
+  @media (max-width:700px){.hero{padding-top:clamp(7.5rem,13vh,8.5rem)}}
+
+  /* ── touch sweep: comfortable hit areas on every link, phone and tablet ── */
+  @media (max-width:1024px){
+    .wm,.back,.nrow a,.cp a,a.mono,.meta dd a{display:inline-flex;align-items:center;min-height:44px}
+    .nrow a{align-items:flex-end}
+  }
+  /* nothing below 9px on a phone */
+  @media (max-width:700px){
+    .fz .k,.fz .tagline,.gate .n,.gate .f,.al .t{font-size:9px}
+  }
+</style>
+</head>
+<body>
+<div id="bar"></div>
+
+<nav><div class="cw navrow">
+  <a class="wm" href="../index.html"><span class="g">&#7864;</span>s&#7885;&#769;sa</a>
+  <a class="back" href="../index.html#work">&larr; All projects</a>
+</div></nav>
+
+<!-- ══════════ HERO ══════════ -->
+<header class="hero">
+  <div class="cw">
+    <p class="mono grey rv">CarePlan 365 &middot; Mental healthcare &middot; Australia &middot; 2024&ndash;present</p>
+    <h1 class="display rv">Fragmented care to<br><span class="em">one connected workspace</span></h1>
+    <p class="dek rv">A platform connecting booking, care, documentation and billing into one continuous patient journey.</p>
+    <dl class="meta rv">
+      <div><dt>Role</dt><dd>Product Designer</dd></div>
+      <div><dt>Scope</dt><dd>End-to-end &middot; Web</dd></div>
+      <div><dt>Users</dt><dd>GPs &middot; Psychologists &middot; ADHD coaches</dd></div>
+    </dl>
+  </div>
+
+  <div class="shot rv" data-dark>
+    <div class="wide">
+      <img id="heroImg" src="careplan-images/hero.jpg" alt="The CarePlan 365 dashboard" width="2400" height="1440">
+    </div>
+  </div>
+</header>
+
+<!-- ══════════ SCENE 1 · IT FEELS SIMPLE — HIDDEN ══════════
+     Remove the `is-hidden` class below to bring this scene back.
+     Its copy and cinematic-prototype slot are intact. -->
+<section class="stagevh is-hidden">
+  <div class="cw">
+    <h2 class="rv">It feels simple.</h2>
+    <p class="lede rv">Booking a therapy session should feel uneventful.</p>
+
+    <div class="slot bleed beatgap rv">
+      <p class="k">To be supplied</p>
+      <h4>Full-screen cinematic prototype</h4>
+      <p>A patient opens CarePlan. Finds a therapist. Picks a time. Books a session. Calendar confirmation. Done.</p>
+      <div class="ratio tall">Screen recording</div>
+    </div>
+
+    <div class="two beatgap">
+      <div class="rv">
+        <div class="beats">
+          <p>You find a provider.<br>Choose a time.<br>Attend your session.<br>Go home.</p>
+        </div>
+        <p class="p" style="margin-top:1.6rem">That&rsquo;s all the patient should ever have to think about.</p>
+      </div>
+      <div class="rv">
+        <p class="p">The best healthcare experiences are the ones where the software quietly disappears into the background.</p>
+        <p class="p">But that simplicity is carefully designed.</p>
+        <p class="p">Because underneath one booked session is an invisible system coordinating people, decisions and rules long before care begins&mdash;and long after it ends.</p>
+      </div>
+    </div>
+
+    <p class="trans rv">The patient only sees one session. We had to design everything they never would.</p>
+  </div>
+</section>
+
+<!-- ══════════ SCENE 2 · THE INVISIBLE SYSTEM ══════════ -->
+<section class="dark stagevh" data-dark>
+  <div class="cw">
+    <!-- centred to sit with the diagram below it; h2 carries max-width:18ch,
+         so it needs the auto margins as well as the text-align -->
+    <h2 class="rv" style="color:var(--cream);text-align:center;margin-inline:auto">The invisible system.</h2>
+
+    <div class="orbit bleed beatgap rv" id="orbit" aria-label="One therapy session and the three stages it moves through.">
+      <div class="core"><span class="l">One</span><span class="n">Therapy Session</span></div>
+      <div class="stem" aria-hidden="true"></div>
+      <div class="nodes">
+        <div class="node" tabindex="0">Before</div>
+        <div class="node" tabindex="0">During</div>
+        <div class="node" tabindex="0">After</div>
+      </div>
+    </div>
+
+    <div class="two beatgap">
+      <div class="rv">
+        <p class="p">Every therapy session quietly moves through three invisible stages.</p>
+        <p class="p">Before the session can happen, someone has to make it possible.</p>
+        <p class="p">During the session, clinicians need the right information at the right time.</p>
+      </div>
+      <div class="rv">
+        <p class="p">After the session, providers need to document care and get paid correctly.</p>
+        <p class="p">This wasn&rsquo;t a collection of features. <b>It was the operating model behind one therapy session.</b></p>
+      </div>
+    </div>
+
+    <p class="trans rv">It all begins before the therapist ever enters the room.</p>
+  </div>
+</section>
+
+<!-- ══════════ SCENE 3 · BEFORE THE SESSION ══════════ -->
+<section class="stagevh">
+  <div class="cw">
+    <h2 class="rv">Before the session.</h2>
+    <p class="lede rv">Long before a therapy session begins, a series of small decisions determine whether it can happen at all.</p>
+    <div class="gates bleed rv" id="gates">
+      <div class="gate"><p class="n">01</p><p class="q">Is the provider available?</p><p class="f">Availability</p></div>
+      <div class="gate"><p class="n">02</p><p class="q">Who created the appointment?</p><p class="f">Ownership</p></div>
+      <div class="gate"><p class="n">03</p><p class="q">How will the patient pay?</p><p class="f">Payment method</p></div>
+      <div class="gate"><p class="n">04</p><p class="q">What type of appointment is this?</p><p class="f">Appointment type</p></div>
+    </div>
+    <p class="note bleed rv">Four answers. <b>Resolve them and the session can exist; miss one and it can&rsquo;t.</b></p>
+
+    <div class="two beatgap">
+      <div class="rv">
+        <p class="p">At first, these decisions existed in different parts of the product.</p>
+        <p class="p">As CarePlan evolved, we brought them together into one appointment model.</p>
+      </div>
+      <div class="rv">
+        <p class="p">Instead of treating the appointment as a calendar event, we treated it as the source of truth for everything that followed.</p>
+        <p class="p">Once an appointment was created, every downstream workflow already understood its context.</p>
+      </div>
+    </div>
+
+    <div class="vproto bleed beatgap rv">
+      <div class="vproto-hd"><span class="t">Prototype &middot; Setting availability</span><span class="t live"><i></i>Looping</span></div>
+      <div class="vstage">
+        <video src="careplan-video/set-availability.mp4" poster="careplan-video/set-availability.jpg" loop muted playsinline preload="none" aria-label="A provider setting their weekly hours of availability in CarePlan, adding time slots for each day."></video>
+      </div>
+      <p class="vcap">Is the provider available? <b>Nothing can be booked against them until this exists.</b></p>
+    </div>
+
+    <div class="vproto bleed rv">
+      <div class="vproto-hd"><span class="t">Prototype &middot; Booking the appointment</span><span class="t live"><i></i>Looping</span></div>
+      <div class="vstage">
+        <video src="careplan-video/book-appointment.mp4" poster="careplan-video/book-appointment.jpg" loop muted playsinline preload="none" aria-label="Scheduling an appointment in CarePlan: choosing a date and time from the provider's available slots, then continuing through the booking steps."></video>
+      </div>
+      <p class="vcap">Only the hours set above are offered. <b>The decisions resolve in order, and the appointment inherits all of them.</b></p>
+    </div>
+
+    <p class="say rv beatgap">The appointment stopped being a booking. It became the foundation of the session.</p>
+    <p class="trans rv">One field quietly influenced everything that happened next. Payment.</p>
+  </div>
+</section>
+
+<!-- ══════════ SCENE 4 · WHEN THE SESSION ENDS ══════════ -->
+<section class="dark stagevh" data-dark>
+  <div class="cw">
+    <h2 class="rv" style="color:var(--cream)">When the session ends.</h2>
+    <p class="lede rv">Ending a therapy session should have been the end of the workflow. It wasn&rsquo;t.</p>
+
+    <div class="freeze bleed beatgap" id="freeze" aria-label="A provider ends a session, then leaves CarePlan to invoice elsewhere.">
+      <div class="fz"><p class="k">01</p><p class="v">Provider clicks <b>End Session</b>.</p><p class="tagline">Inside CarePlan</p></div>
+      <div class="fz"><p class="k">02</p><p class="v">The interface pauses.</p><p class="tagline">Nothing follows</p></div>
+      <div class="fz out"><p class="k">03</p><p class="v">The provider leaves CarePlan and generates the invoice somewhere else.</p><p class="tagline">Freeze frame</p></div>
+    </div>
+
+    <div class="two beatgap">
+      <div class="rv">
+        <p class="p">Providers completed care inside CarePlan, then left the platform to generate invoices elsewhere.</p>
+        <p class="p">That wasn&rsquo;t just inconvenient. <b>It exposed a gap in how we understood Australian healthcare billing.</b></p>
+      </div>
+      <div class="rv">
+        <p class="p">As we worked with providers, we discovered that every session carried financial rules that affected everything downstream.</p>
+        <div class="rulegrid">
+          <span>Private billing</span><span>Bulk billing</span><span>Gap fees</span>
+          <span>GST</span><span>Authorised payments</span><span>Refunds</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="say rv beatgap">The invoice wasn&rsquo;t the difficult part. Representing the logic behind it was.</p>
+
+    <div class="vproto bleed beatgap rv">
+      <div class="vproto-hd"><span class="t">Prototype &middot; Billing states</span><span class="t live"><i></i>Looping</span></div>
+      <div class="vstage">
+        <video src="careplan-video/billing-states.mp4" poster="careplan-video/billing-states.jpg" loop muted playsinline preload="none" aria-label="The billing and claim tab of a session in CarePlan moving from a pending payment with no invoice, through charging the patient, to a paid invoice with a receipt."></video>
+      </div>
+      <p class="vcap">Pending payment. No invoice yet. Charge patient. Paid at booking. <b>The same session, carrying a different financial state at every point.</b></p>
+    </div>
+
+    <div class="two beatgap">
+      <div class="rv">
+        <p class="p">One of the biggest changes we made was moving payment selection into the appointment itself.</p>
+        <p class="p"><b>An appointment could no longer exist without a billing pathway.</b></p>
+        <p class="p">Instead of billing reacting to the session, the session carried the information billing needed from the beginning.</p>
+      </div>
+      <div class="rv">
+        <p class="p">Getting that right took multiple product and engineering iterations.</p>
+        <p class="p">Real providers uncovered edge cases we couldn&rsquo;t predict in design reviews.</p>
+        <div class="beats" style="margin-top:0"><p>Authorisation flows.<br>Incorrect charges.<br>Refunds.</p></div>
+        <p class="p" style="margin-top:1.2rem">Every iteration made the billing engine more faithful to how care is actually delivered.</p>
+      </div>
+    </div>
+
+    <div class="vproto bleed beatgap rv">
+      <div class="vproto-hd"><span class="t">Prototype &middot; Invoices</span><span class="t live"><i></i>Looping</span></div>
+      <div class="vstage">
+        <video src="careplan-video/billing-invoice.mp4" poster="careplan-video/billing-invoice.jpg" loop muted playsinline preload="none" aria-label="The invoice list on a patient record in CarePlan, showing charges with pending, successful and refunded states, and the option to rebill."></video>
+      </div>
+      <p class="vcap">Pending. Successful. Refunded. Rebill. <b>Every one of those states came from something that happened in production.</b></p>
+    </div>
+
+    <div class="vproto bleed rv">
+      <div class="vproto-hd"><span class="t">Prototype &middot; Medicare claims</span><span class="t live"><i></i>Looping</span></div>
+      <div class="vstage">
+        <video src="careplan-video/billing-medicare.mp4" poster="careplan-video/billing-medicare.jpg" loop muted playsinline preload="none" aria-label="Medicare claims on a patient record in CarePlan, showing claim statuses including rejected, pended and completed."></video>
+      </div>
+      <p class="vcap">A claim isn&rsquo;t paid or unpaid. <b>It sits in a state Medicare controls, and the product has to represent every one of them.</b></p>
+    </div>
+
+    <p class="trans rv">Once the session carried billing context&hellip; everything else became easier to coordinate.</p>
+  </div>
+</section>
+
+<!-- ══════════ SCENE 5 · WHILE CARE IS HAPPENING ══════════ -->
+<section class="clay stagevh">
+  <div class="cw">
+    <h2 class="rv">While care is happening.</h2>
+    <p class="lede rv">Therapy doesn&rsquo;t end when the conversation ends.</p>
+    <div class="afterline bleed rv" id="afterline">
+      <div class="al"><p class="t">In the room</p><p class="v">Clinicians revisit sessions.</p></div>
+      <div class="al"><p class="t">Hours later</p><p class="v">They remember details later.</p></div>
+      <div class="al"><p class="t">Days later</p><p class="v">They refine observations.</p></div>
+      <div class="al"><p class="t">Next time</p><p class="v">They prepare for the next appointment.</p></div>
+    </div>
+
+    <div class="vproto bleed beatgap rv">
+      <div class="vproto-hd"><span class="t">Prototype &middot; Notes on a patient record</span><span class="t live"><i></i>Looping</span></div>
+      <div class="vstage">
+        <video src="careplan-video/document-notes.mp4" poster="careplan-video/document-notes.jpg" loop muted playsinline preload="none" aria-label="The notes section of a patient record in CarePlan, listing notes by date and author with edited markers, alongside a selected note and a picker for earlier versions of it."></video>
+      </div>
+      <p class="vcap">Every note is dated, attributed and marked when it has been edited. <b>A note isn&rsquo;t a document you finish. It&rsquo;s a record you keep adding to.</b></p>
+    </div>
+
+    <div class="two beatgap">
+      <div class="rv">
+        <p class="p">We redesigned documentation to reflect that reality.</p>
+        <p class="p">Instead of treating notes as something that had to be completed immediately, we made them part of a <b>living clinical record</b>.</p>
+      </div>
+      <div class="rv">
+        <p class="p">Providers could return to previous sessions, add observations, and build on earlier context without losing the original record.</p>
+        <p class="p">Documentation stopped being an administrative task. <b>It became part of continuity of care.</b></p>
+      </div>
+    </div>
+
+    <p class="trans rv">Individually, these workflows solved different problems. Together, they became one connected platform.</p>
+  </div>
+</section>
+
+
+
+<section class="dark" data-dark>
+  <div class="cw">
+    <div class="two">
+      <div class="rv">
+        <p class="p">By the end of the redesign, CarePlan no longer felt like a collection of healthcare features.</p>
+        <p class="p">Every workflow revolved around the same question:</p>
+        <p class="say" style="margin-top:1.4rem">What does this therapy session need next?</p>
+      </div>
+      <div class="rv">
+        <p class="p">That question shaped how appointments were created, how clinicians documented care, how providers got paid and how patients returned for future sessions.</p>
+        <p class="p">The product became simpler&mdash;not because healthcare became simpler, but because <b>the software finally reflected the way care actually works.</b></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ REFLECTION ══════════ -->
+<section class="clay">
+  <div class="cw">
+    <p class="scene rv">Reflection</p>
+    <div class="two" style="align-items:center;margin-top:clamp(1rem,3vw,2rem)">
+      <div class="rv"><p class="pull">Good enterprise products don&rsquo;t remove complexity. They <span style="color:var(--red)">organise it</span>.</p></div>
+      <div class="rv">
+        <p class="p">When I joined CarePlan, I thought I was designing healthcare software.</p>
+        <p class="p">Looking back, I think I was designing something quieter. <b>The invisible systems that allow one therapy session to feel effortless.</b></p>
+        <p class="p">When the underlying model reflects the real world, the interface can finally disappear&mdash;and clinicians can focus on the people they&rsquo;re there to help.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="next"><div class="cw">
+  <div class="nrow">
+    <a href="tragent-v3.html">
+      <p class="display">Tragent &#8599;</p>
+    </a>
+    <a class="mono" href="../index.html#work" style="color:rgba(255,253,240,.45);text-decoration:none;padding-bottom:.6rem">All work</a>
+  </div>
+  <div class="cp"><span>&copy; 2026 Esosa Etiosasere</span><a href="#" style="color:inherit">Back to top &uarr;</a></div>
+</div></div>
+
+<script>
+(function(){
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:.1,rootMargin:'0px 0px -6% 0px'});
+  document.querySelectorAll('.rv').forEach(function(el){io.observe(el);});
+
+
+  function once(el,cb){
+    if(!el) return;
+    new IntersectionObserver(function(es,o){es.forEach(function(e){
+      if(!e.isIntersecting)return; o.unobserve(e.target); cb();
+    });},{threshold:.3}).observe(el);
+  }
+
+  /* the gates and the after-the-session line land in sequence */
+  ['gates','afterline'].forEach(function(id){
+    var el=document.getElementById(id); if(!el) return;
+    if(reduced){ el.classList.add('on'); return; }
+    new IntersectionObserver(function(es,o){es.forEach(function(e){
+      if(!e.isIntersecting)return; o.unobserve(e.target); e.target.classList.add('on');
+    });},{threshold:.3}).observe(el);
+  });
+
+  /* Recorded prototypes — loop, but only while on screen */
+  var vids=[].slice.call(document.querySelectorAll('.vproto video'));
+  if(vids.length){
+    var vo=new IntersectionObserver(function(es){es.forEach(function(e){
+      var v=e.target;
+      if(e.isIntersecting){ if(v.preload==='none') v.preload='auto'; var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){}); }
+      else v.pause();
+    });},{threshold:.25});
+    vids.forEach(function(v){
+      if(reduced){ v.removeAttribute('autoplay'); v.controls=true; v.pause(); }
+      else vo.observe(v);
+    });
+  }
+
+  /* ── SCENE 4 · the freeze frame lands one panel at a time ── */
+  var fz=document.getElementById('freeze');
+  if(fz){
+    var panels=[].slice.call(fz.querySelectorAll('.fz'));
+    once(fz,function(){
+      panels.forEach(function(x,i){ setTimeout(function(){x.classList.add('in');}, reduced?0:i*700); });
+    });
+  }
+
+  var bar=document.getElementById('bar'),
+      darks=[].slice.call(document.querySelectorAll('[data-dark]')),
+      heroImg=document.getElementById('heroImg');
+  addEventListener('scroll',function(){
+    var h=document.body.scrollHeight-innerHeight;
+    bar.style.width=(h>0?(scrollY/h)*100:0)+'%';
+    document.body.classList.toggle('on-dark', darks.some(function(d){
+      var b=d.getBoundingClientRect(); return b.top<=70 && b.bottom>70;
+    }));
+    /* the hero image rises slightly as the page scrolls past it */
+    if(heroImg && !reduced){
+      var hb=heroImg.getBoundingClientRect();
+      if(hb.bottom>0 && hb.top<innerHeight) heroImg.style.transform='translateY('+(-scrollY*0.05)+'px)';
+    }
+  },{passive:true});
+
+  /* light -> dark seams: pin the outgoing block, let the dark one ride over it */
+  (function(){
+    var kids=[].slice.call(document.body.children), page=getComputedStyle(document.body).backgroundColor;
+    function isDark(el){
+      if(!el || el.nodeType!==1) return false;
+      /* the footer is exempt — it sits at the end of the page, it doesn't ride over anything */
+      if(el.classList.contains('next')) return false;
+      return el.hasAttribute('data-dark') || el.classList.contains('dark');
+    }
+    /* every block has to be opaque, or it shows whatever is pinned behind it */
+    kids.forEach(function(el){
+      if(!el.getClientRects().length || el.tagName==='SCRIPT' || el.tagName==='STYLE') return;
+      var bg=getComputedStyle(el).backgroundColor;
+      if(!bg || bg==='transparent' || /,\s*0\)$/.test(bg)) el.style.background=page;
+    });
+    kids.forEach(function(el,i){
+      if(!isDark(el) || !el.getClientRects().length) return;
+      var prev=kids[i-1];
+      if(!prev || isDark(prev) || !prev.getClientRects().length) return;
+      if(prev.tagName==='NAV' || prev.tagName==='SCRIPT' || prev.tagName==='STYLE') return;
+      if(getComputedStyle(prev).position==='fixed') return;
+      var wrap=document.createElement('div');
+      wrap.className='ru';
+      prev.parentNode.insertBefore(wrap,prev);
+      wrap.appendChild(prev);
+      wrap.appendChild(document.createElement('div')).className='rugap';
+      prev.classList.add('rideunder');
+      el.classList.add('rideover');
+    });
+    function sizeRides(){
+      [].slice.call(document.querySelectorAll('.rideunder')).forEach(function(s){
+        /* clamp to 0: when the block is SHORTER than the viewport this value
+           is positive, and a positive sticky top shoves the block down by that
+           much at the start of its range — which is what put a gap under the
+           nav on tall viewports. 0 means it simply pins at the top instead. */
+        s.style.top=Math.min(0, innerHeight - s.offsetHeight)+'px';
+      });
+    }
+    sizeRides();
+    addEventListener('resize',sizeRides,{passive:true});
+    addEventListener('load',sizeRides);
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(sizeRides);
+    /* paint order has to follow document order, or a rideover sits on top of
+       the non-positioned sections that come after it */
+    [].slice.call(document.body.children).forEach(function(el,i){
+      if(el.tagName==='SCRIPT' || el.tagName==='STYLE') return;
+      var cs=getComputedStyle(el);
+      if(cs.position==='fixed') return;
+      if(cs.position==='static') el.style.position='relative';
+      el.style.zIndex=String(i+1);
+    });
+  })();
+
+})();
+</script>
+</body>
+</html>

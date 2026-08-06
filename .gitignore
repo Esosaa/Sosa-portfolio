@@ -1,12 +1,46 @@
-# macOS
-.DS_Store
+# ─────────────────────────────────────────────────────────────
+# Whitelist. Everything is ignored by default; only the files the
+# live site actually needs are tracked. Earlier iterations, source
+# recordings and scratch material stay local.
+# ─────────────────────────────────────────────────────────────
 
-# Editor / OS junk
+/*
+!.gitignore
+!README.md
+
+# the homepage
+!/index.html
+
+# the three case studies and their assets
+!/site/
+/site/*
+!/site/flux-v3.html
+!/site/careplan-v3.html
+!/site/tragent-v3.html
+!/site/about-photo.png
+!/site/flux-images/
+!/site/flux-video/
+!/site/careplan-images/
+!/site/careplan-video/
+!/site/tragent-images/
+!/site/tragent-video/
+
+# ── never tracked ────────────────────────────────────────────
+# source recordings and exports. the encoded .mp4s under site/ are
+# what ships; these originals run to hundreds of MB.
+/prototypes/
+/Tragent videos/
+/careplan prototypes/
+/hermaidlead/
+
+# retired work, kept locally
+/_archive/
+
+# macOS / editor / env
+.DS_Store
 *.swp
 *.swo
 Thumbs.db
-
-# Local env / build artifacts
 .env
 .env.local
 node_modules/

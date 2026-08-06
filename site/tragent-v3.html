@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tragent — One workspace for planning complex trips | Esosa Etiosasere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=tanker@400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFFDF0; --cream-2:#F6F3E4; --ink:#191919; --body:#555047;
+    --red:#BC532F; --red-soft:#E08B63; --grey:#8F8F8F;
+    --hair:rgba(25,25,25,.14); --hair-d:rgba(255,253,240,.12); --paper:#FBF7E8;
+    --f:'Geist',-apple-system,sans-serif; --m:'Geist Mono',ui-monospace,monospace;
+    --s:'Instrument Serif',Georgia,serif;
+    --a:'Geist',-apple-system,sans-serif;
+    --d:'Tanker','Arial Black',sans-serif;
+    --ride:70vh; --col:1000px; --gut:clamp(1.5rem,7vw,7rem); --sec:clamp(5rem,10vw,8rem);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--cream);color:var(--ink);font-family:var(--f);font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  ::selection{background:var(--red);color:#fff}
+  img{max-width:100%;height:auto;display:block}
+  a{color:inherit}
+  .cw{width:100%;max-width:calc(var(--col) + var(--gut)*2);margin-inline:auto;padding-inline:var(--gut)}
+  .wide{width:100%;max-width:calc(1280px + var(--gut)*2);margin-inline:auto;padding-inline:var(--gut)}
+  h2{font-family:var(--f);font-weight:500;font-size:clamp(1.75rem,3.4vw,2.5rem);line-height:1.12;letter-spacing:-.028em;max-width:22ch}
+  h3{font-family:var(--f);font-weight:500;font-size:.95rem;line-height:1.35;letter-spacing:-.01em}
+  .display{font-family:var(--d);font-weight:400;text-transform:uppercase;letter-spacing:-.012em;line-height:.9}
+  .mono{font-family:var(--m);font-size:.6875rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;line-height:1.3}
+  .grey{color:var(--grey)}
+  p{max-width:58ch}
+  .p{color:var(--body);margin-bottom:1.2rem;max-width:52ch}
+  .p:last-child{margin-bottom:0}
+  .p b{color:var(--ink);font-weight:500}
+  .dark .p{color:rgba(255,253,240,.7)} .dark .p b{color:var(--cream)}
+  .lede{font-size:clamp(1rem,1.72vw,1.175rem);line-height:1.55;letter-spacing:-.012em;color:var(--body);max-width:46ch;margin-top:1.4rem}
+  .dark .lede{color:rgba(255,253,240,.72)}
+  .say{font-family:var(--a);font-weight:500;font-size:clamp(1.45rem,2.8vw,2.05rem);line-height:1.3;letter-spacing:-.025em;color:var(--red);max-width:28ch}
+  .dark .say{color:var(--red-soft)}
+  .pull{font-family:var(--a);font-weight:500;font-size:clamp(1.9rem,4.2vw,3rem);line-height:1.18;letter-spacing:-.03em;max-width:20ch}
+  .eyebrow{font-family:var(--m);font-size:.625rem;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--red);margin-bottom:1.1rem}
+  .dark .eyebrow{color:var(--red-soft)}
+  section{padding:var(--sec) 0}
+  .dark{background:#111;color:var(--cream)}
+  .clay{background:var(--cream-2)}
+  .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(2rem,5vw,4rem);align-items:start}
+  @media (max-width:820px){.two{grid-template-columns:1fr;gap:1.6rem}}
+  .bleed{--bw:min(1280px,calc(100vw - var(--gut)*2));width:var(--bw);margin-inline:calc((100% - var(--bw))/2)}
+  .beatgap{margin-top:clamp(2.5rem,6vw,4.5rem)}
+  .note{font-family:var(--m);font-size:.625rem;letter-spacing:.14em;text-transform:uppercase;line-height:1.9;color:var(--grey);padding-top:1.1rem;max-width:64ch}
+  .dark .note{color:rgba(255,253,240,.42)}
+  .note b{color:var(--red);font-weight:500} .dark .note b{color:var(--red-soft)}
+  .beats{margin-top:1.4rem}
+  .beats p{font-size:clamp(1.05rem,1.7vw,1.2rem);line-height:1.95;color:var(--body);max-width:46ch}
+  .dark .beats p{color:rgba(255,253,240,.72)}
+
+  /* ── hero ── */
+  .hero{padding-block:clamp(8rem,17vh,11rem) 0}
+  .hero .mono{max-width:none}
+  .hero h1{font-size:clamp(1.9rem,5.4vw,4.3rem);line-height:1.02;margin-top:.6rem;max-width:none}
+  .hero h1 .em{font-family:var(--s);font-style:italic;font-weight:400;text-transform:none;letter-spacing:-.01em;color:var(--red);font-size:1.06em}
+  .hero .dek{margin-top:1.6rem;max-width:52ch;font-size:.95rem;color:var(--body)}
+  .meta{display:flex;flex-wrap:wrap;gap:2.4rem;margin-top:clamp(2.5rem,5vw,3.5rem)}
+  .meta dt{font-family:var(--m);font-size:.625rem;letter-spacing:.18em;text-transform:uppercase;color:var(--grey);margin-bottom:.35rem}
+  .meta dd{font-size:.85rem}
+  /* the band takes the hero image's own background colour, so the tablet
+     reads as floating in the page rather than pasted onto a panel */
+  .shot{margin-top:clamp(3rem,6vw,4.5rem);background:#F2F2BD;padding:clamp(1rem,3vw,2.5rem) 0;overflow:hidden}
+  .shot img{will-change:transform}
+
+  /* ── recorded prototypes ────────────────────────────────────────────
+     Tragent's own UI is near-black and each recording carries a dark bezel,
+     so the stage stays near-black on every section and the bezel disappears
+     into it. The amber UI accent reads as a lit screen against it. */
+  .vproto{margin-top:clamp(1.75rem,3.5vw,2.5rem);background:#0A0A0A;border:1px solid rgba(255,253,240,.11);position:relative}
+  .vproto + .vproto{margin-top:clamp(1rem,2vw,1.4rem)}
+  .vproto-hd{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;padding:.85rem 1.1rem;border-bottom:1px solid rgba(255,253,240,.11)}
+  .vproto-hd .t{font-family:var(--m);font-size:.5625rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,253,240,.45)}
+  .vproto-hd .live{display:flex;align-items:center;gap:.45rem;color:var(--red-soft)}
+  .vproto-hd .live i{width:5px;height:5px;border-radius:50%;background:var(--red-soft);animation:pulse 2.4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+  .vstage{position:relative;padding:clamp(.9rem,2.6vw,1.9rem);overflow:hidden}
+  .vstage::before{content:"";position:absolute;inset:0;background:radial-gradient(75% 60% at 50% 0%,rgba(224,139,99,.15),rgba(224,139,99,0) 68%);pointer-events:none}
+  .vproto video{position:relative;display:block;width:100%;height:auto;background:#000;box-shadow:0 34px 70px rgba(0,0,0,.6)}
+  /* the exported screens carry their own rounded corners as transparency —
+     no fill and no box-shadow, or the square border-box shows through them */
+  .vproto img{position:relative;display:block;width:100%;height:auto;background:transparent}
+  .vcap{font-family:var(--m);font-size:.625rem;letter-spacing:.05em;line-height:1.7;color:rgba(255,253,240,.5);max-width:74ch;padding:0 clamp(.9rem,2.6vw,1.9rem) clamp(1.1rem,2.4vw,1.5rem)}
+  .vcap b{color:var(--red-soft);font-weight:500}
+  .shot .vproto{margin-top:0;border:0;background:transparent}
+  .shot .vstage{padding:0}
+  @media (prefers-reduced-motion:reduce){.vproto-hd .live i{animation:none}}
+
+  /* ── image placeholders ── */
+  .slot{margin-top:clamp(1.75rem,3.5vw,2.5rem);border:1px dashed var(--hair);padding:clamp(1.4rem,3.5vw,2.2rem);background:rgba(25,25,25,.015)}
+  .dark .slot{border-color:rgba(255,253,240,.2);background:rgba(255,253,240,.02)}
+  .slot .k{font-family:var(--m);font-size:.5625rem;letter-spacing:.18em;text-transform:uppercase;color:var(--red)}
+  .dark .slot .k{color:var(--red-soft)}
+  .slot h4{font-family:var(--f);font-weight:500;font-size:.95rem;letter-spacing:-.01em;margin:.85rem 0 .4rem}
+  .slot p{font-size:.85rem;color:var(--body);max-width:56ch}
+  .dark .slot p{color:rgba(255,253,240,.6)}
+  .slot .ratio{margin-top:1.3rem;border:1px solid var(--hair);aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;
+    font-family:var(--m);font-size:.5625rem;letter-spacing:.18em;text-transform:uppercase;color:var(--grey);
+    background:repeating-linear-gradient(45deg,transparent 0 9px,rgba(25,25,25,.028) 9px 18px)}
+  .dark .slot .ratio{border-color:rgba(255,253,240,.14);color:rgba(255,253,240,.3);background:repeating-linear-gradient(45deg,transparent 0 9px,rgba(255,253,240,.03) 9px 18px)}
+  .slots2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(1rem,2.5vw,1.6rem)}
+  @media (max-width:760px){.slots2{grid-template-columns:1fr}}
+  .slots2 .slot{margin-top:0}
+  .slot.spread{margin-top:clamp(2rem,4vw,3rem)}
+
+  /* ── a numbered flow that lights up on scroll ── */
+  .flow{display:grid;gap:.4rem;margin-top:clamp(2rem,4vw,3rem)}
+  .flow.f5{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .flow.f4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  @media (max-width:900px){.flow.f5,.flow.f4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:460px){.flow.f5,.flow.f4{grid-template-columns:1fr}}
+  .fs{border:1px solid var(--hair);padding:1rem .9rem;min-height:7rem;
+    display:flex;flex-direction:column;transition:color .55s ease,border-color .55s ease}
+  .fs .n{font-family:var(--m);font-size:.5rem;letter-spacing:.16em;color:var(--grey);margin-bottom:.9rem}
+  .fs .v{font-family:var(--f);font-weight:500;font-size:.85rem;color:var(--body);letter-spacing:-.01em}
+  .fs .s{font-size:.8125rem;color:var(--grey);margin-top:.4rem;max-width:none}
+  /* the step lights up through its numeral and its text, not through a coloured frame */
+  .flow.on .fs .n{color:var(--red)} .flow.on .fs .v{color:var(--ink)}
+  .dark .fs{border-color:var(--hair-d)}
+  .dark .fs .v{color:rgba(255,253,240,.72)} .dark .fs .n,.dark .fs .s{color:rgba(255,253,240,.4)}
+  .dark .flow.on .fs .n{color:var(--red-soft)} .dark .flow.on .fs .v{color:var(--cream)}
+  .flow.on .fs:nth-child(2){transition-delay:.14s} .flow.on .fs:nth-child(3){transition-delay:.28s}
+  .flow.on .fs:nth-child(4){transition-delay:.42s} .flow.on .fs:nth-child(5){transition-delay:.56s}
+
+  /* ── two sides ── */
+  .sides{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(1rem,3vw,2rem);margin-top:clamp(2rem,4vw,3rem)}
+  @media (max-width:760px){.sides{grid-template-columns:1fr}}
+  .side{border:1px solid var(--hair);padding:clamp(1.3rem,3vw,1.9rem)}
+  .side.own{border-color:var(--red);background:rgba(188,83,47,.05)}
+  .side .k{font-family:var(--m);font-size:.5625rem;letter-spacing:.18em;text-transform:uppercase;color:var(--grey);margin-bottom:.9rem}
+  .side.own .k{color:var(--red)}
+  .side p{font-size:.85rem;color:var(--body);max-width:none}
+
+  /* ── the three agents ── */
+  /* ── the gate: two lanes that start together, one waits to commit ── */
+  .gsplit{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.92fr);gap:clamp(2rem,5vw,4rem);align-items:center}
+  @media (max-width:900px){.gsplit{grid-template-columns:1fr;gap:2.5rem}}
+  .lanes{position:relative;padding:clamp(1.4rem,3vw,2rem) 0}
+  .lane{position:relative;padding-bottom:clamp(1.8rem,4vw,2.6rem)}
+  .lane:last-of-type{padding-bottom:0}
+  .lk{font-family:var(--m);font-size:.5625rem;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-bottom:.7rem;max-width:none}
+  .le{font-family:var(--m);font-size:.5rem;letter-spacing:.16em;text-transform:uppercase;color:var(--grey);margin-top:.7rem;text-align:right;max-width:none}
+  .tr{position:relative;height:1px;background:var(--hair)}
+  .dot{position:absolute;top:-4px;left:0;width:9px;height:9px;border-radius:50%;background:var(--red)}
+  .gateline{position:absolute;left:71%;top:0;bottom:0;width:1px;background:var(--hair);pointer-events:none}
+  .gateline span{position:absolute;top:-.2rem;left:.6rem;font-family:var(--m);font-size:.5rem;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--grey);white-space:nowrap}
+  /* nothing moves until the figure is actually on screen */
+  .lanes.on .dv{animation:runvisa 9s cubic-bezier(.4,0,.2,1) infinite}
+  .lanes.on .dp{animation:runplan 9s cubic-bezier(.4,0,.2,1) infinite}
+  .lanes.on .gateline{animation:opengate 9s linear infinite}
+  @keyframes runvisa{
+    0%{left:0} 38%{left:calc(71% - 4px)} 52%{left:calc(71% - 4px)}
+    68%{left:calc(100% - 9px)} 100%{left:calc(100% - 9px)} }
+  @keyframes runplan{
+    0%{left:0} 30%{left:calc(71% - 22px)} 62%{left:calc(71% - 22px)}
+    80%{left:calc(100% - 9px)} 100%{left:calc(100% - 9px)} }
+  @keyframes opengate{ 0%,58%{background:var(--red)} 64%,100%{background:var(--hair)} }
+  @media (prefers-reduced-motion:reduce){
+    .lanes.on .dv,.lanes.on .dp,.lanes.on .gateline{animation:none}
+    .lanes .dv{left:calc(100% - 9px)} .lanes .dp{left:calc(71% - 22px)}
+  }
+
+  /* ── research · one agent at a time, driven by scroll ── */
+  .pstage{position:relative;height:300vh;background:#111;color:var(--cream)}
+  .ppin{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+  .ptrack{display:flex;gap:.4rem;margin-top:clamp(2.5rem,5vw,3.5rem)}
+  .pd{width:44px;height:2px;background:var(--hair-d);transition:background .4s ease}
+  .pd.on{background:var(--red-soft)}
+  .pone{display:grid;grid-template-columns:minmax(0,.42fr) minmax(0,1fr);gap:clamp(1.4rem,4vw,3rem);
+    margin-top:clamp(1.4rem,3vw,2rem);min-height:clamp(12rem,24vh,15rem);align-items:start;
+    transition:opacity .34s ease,transform .34s ease}
+  @media (max-width:760px){.pone{grid-template-columns:1fr;gap:.9rem}}
+  .pone.swap{opacity:0;transform:translateY(10px)}
+  .pone .who{font-family:var(--m);font-size:.6875rem;letter-spacing:.18em;text-transform:uppercase;color:var(--red-soft)}
+  .pone .role{font-family:var(--m);font-size:.5625rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,253,240,.4);margin-top:.6rem;line-height:1.7}
+  .pone .pos{font-family:var(--a);font-weight:500;font-size:clamp(1.35rem,2.8vw,1.95rem);line-height:1.25;letter-spacing:-.025em;color:var(--cream);max-width:26ch}
+  .pone .det{color:rgba(255,253,240,.62);margin-top:1.1rem;font-size:.85rem;max-width:54ch}
+  .pone .bnl{font-family:var(--m);font-size:.5625rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red-soft);
+    border-top:1px solid var(--hair-d);padding-top:.9rem;margin-top:1.4rem;max-width:none}
+  .ppin .hint{font-family:var(--m);font-size:.5625rem;letter-spacing:.2em;text-transform:uppercase;
+    color:rgba(255,253,240,.28);text-align:center;padding-bottom:2.4rem}
+  @media (prefers-reduced-motion:reduce){
+    .pstage{height:auto}
+    .ppin{position:static;height:auto;padding:var(--sec) 0}
+    .pone{opacity:1;transform:none}
+  }
+
+  /* ── quotes ── */
+  .quote{margin-top:clamp(2.2rem,4.5vw,3.2rem);border-left:1px solid var(--red);padding-left:clamp(1.2rem,3vw,2rem)}
+  .dark .quote{border-left-color:var(--red-soft)}
+  .quote p{font-family:var(--a);font-weight:500;font-size:clamp(1.15rem,2.2vw,1.5rem);line-height:1.4;letter-spacing:-.02em;max-width:36ch}
+  .dark .quote p{color:var(--cream)}
+  .quote .who{font-family:var(--m);font-size:.5625rem;letter-spacing:.2em;text-transform:uppercase;color:var(--grey);margin-top:1rem}
+  .dark .quote .who{color:rgba(255,253,240,.4)}
+
+  /* ── capability cards ── */
+  .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(1rem,2.5vw,1.6rem);margin-top:clamp(2rem,4vw,3rem)}
+  .cards.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  @media (max-width:900px){.cards,.cards.c3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:520px){.cards,.cards.c3{grid-template-columns:1fr}}
+  .cd{border-top:1px solid var(--hair);padding-top:1.1rem}
+  .dark .cd{border-top-color:var(--hair-d)}
+  .cd .k{font-family:var(--m);font-size:.5625rem;letter-spacing:.16em;text-transform:uppercase;color:var(--red);margin-bottom:.7rem}
+  .dark .cd .k{color:var(--red-soft)}
+  .cd p{font-size:.85rem;color:var(--body);max-width:none}
+  .dark .cd p{color:rgba(255,253,240,.62)}
+
+  /* ── three stages ── */
+  .stages{margin-top:clamp(2rem,4vw,3rem);border-top:1px solid var(--hair)}
+  .st{display:grid;grid-template-columns:2.5rem minmax(0,.5fr) minmax(0,1fr) auto;gap:clamp(1rem,3vw,2rem);
+    padding:clamp(1.2rem,2.6vw,1.7rem) 0;border-bottom:1px solid var(--hair);align-items:start}
+  @media (max-width:820px){.st{grid-template-columns:2.5rem minmax(0,1fr);row-gap:.5rem}
+    .st .body{grid-column:2} .st .tag{grid-column:2;justify-self:start}}
+  .st .n{font-family:var(--m);font-size:.625rem;color:var(--red);padding-top:.3rem}
+  .st h3{max-width:16ch}
+  .st .body{font-size:.85rem;color:var(--body);max-width:52ch}
+  .st .tag{font-family:var(--m);font-size:.5rem;letter-spacing:.16em;text-transform:uppercase;color:var(--grey);
+    border:1px solid var(--hair);padding:.4rem .6rem;white-space:nowrap}
+  .st .tag.built{color:var(--red);border-color:rgba(188,83,47,.45)}
+  .st.off h3,.st.off .body{opacity:.55}
+
+  /* ── the BCC address ── */
+  /* quiet: a hairline block with one accented edge, not a full outlined box */
+  .addr{margin-top:clamp(1.6rem,3vw,2.2rem);border-left:1px solid var(--red);padding:.4rem 0 .4rem clamp(1.1rem,2.6vw,1.6rem)}
+  .dark .addr{border-left-color:rgba(224,139,99,.55)}
+  .addr .k{font-family:var(--m);font-size:.5625rem;letter-spacing:.18em;text-transform:uppercase;color:var(--grey);margin-bottom:.7rem}
+  .dark .addr .k{color:rgba(255,253,240,.4)}
+  .addr .v{font-family:var(--m);font-size:clamp(.8125rem,1.9vw,1.05rem);color:var(--ink);word-break:break-all;letter-spacing:-.01em;max-width:none}
+  .dark .addr .v{color:var(--cream)}
+
+  /* ── exploration: visibly unbuilt ── */
+  .explore{border:1px dashed rgba(255,253,240,.28);padding:clamp(1.4rem,3.5vw,2.4rem);margin-top:clamp(2rem,4vw,3rem);background:rgba(255,253,240,.02)}
+  .explore .k{font-family:var(--m);font-size:.5625rem;letter-spacing:.2em;text-transform:uppercase;color:var(--red-soft);margin-bottom:1.2rem}
+  .explore .cards{margin-top:0}
+
+  /* ── open questions ── */
+  .qs{margin-top:clamp(2rem,4vw,3rem);border-top:1px solid var(--hair-d)}
+  /* flush left: the rule, the number and the question all start where the heading does */
+  .qr{padding:clamp(1.2rem,2.8vw,1.8rem) 0;border-bottom:1px solid var(--hair-d)}
+  .qr .n{font-family:var(--m);font-size:.625rem;letter-spacing:.18em;color:var(--red-soft);margin-bottom:.7rem}
+  .qr h3{color:var(--cream);max-width:30ch;margin-bottom:.5rem}
+  .qr p{font-size:.85rem;color:rgba(255,253,240,.62);max-width:56ch}
+
+  figure{margin:0}
+  #bar{position:fixed;top:0;left:0;height:2px;width:0;background:var(--red);z-index:90}
+  nav{position:fixed;top:0;left:0;right:0;z-index:85;padding:1.1rem 0;background:rgba(255,253,240,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--hair);transition:background .4s,border-color .4s}
+  body.on-dark nav{background:rgba(17,17,17,.86);border-color:var(--hair-d)}
+  .navrow{display:flex;justify-content:space-between;align-items:center}
+  .wm{text-decoration:none;font-weight:500;font-size:.95rem;transition:color .4s}
+  .wm .g{font-family:var(--s);font-style:italic;color:var(--red)}
+  body.on-dark .wm{color:var(--cream)}
+  .back{font-family:var(--m);font-size:.6875rem;letter-spacing:.18em;text-transform:uppercase;color:var(--grey);text-decoration:none;padding:.6rem 0}
+  .back:hover{color:var(--red)}
+  body.on-dark .back{color:rgba(255,253,240,.5)}
+  .next{background:#111;color:var(--cream)}
+  .nrow{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;flex-wrap:wrap;padding:var(--sec) 0 clamp(3rem,6vw,4rem)}
+  .nrow a{text-decoration:none}
+  .nrow .display{font-size:clamp(2.2rem,6vw,4.4rem)}
+  .nrow a:hover .display{color:var(--red-soft)}
+  .cp{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;border-top:1px solid var(--hair-d);padding:1.4rem 0 3rem;color:rgba(255,253,240,.45);font-size:.8125rem}
+  .cp a{text-decoration:none}
+  .rv{opacity:0;transform:translateY(22px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+  .rv.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rv{opacity:1;transform:none;transition:none}.flow .fs{transition:none}}
+  :focus-visible{outline:2px solid var(--red);outline-offset:3px}
+  .dark :focus-visible{outline-color:var(--red-soft)}
+
+  /* ── a dark section rides up over the light one before it ──
+     the outgoing block is wrapped in .ru, which carries --ride of slack below it.
+     the block pins at the viewport bottom for exactly that distance while the dark
+     block — pulled back up by the same amount — scrolls over it, then releases.
+     the slack must be bounded: an unwrapped sticky bottom:0 glues the block to the
+     viewport for the rest of the document. */
+  .ru{position:relative}
+  /* the slack has to be a real box inside .ru: sticky is clamped to the
+     containing block's CONTENT box, so padding-bottom gives it nothing to move in */
+  .rugap{height:var(--ride)}
+  /* `top` is set per element in JS: 100vh - its own height, so it pins exactly
+     when its bottom reaches the viewport bottom. bottom:0 sticky does not do this. */
+  .rideunder{position:sticky}
+  .rideover{margin-top:calc(var(--ride) * -1);box-shadow:0 -26px 60px rgba(0,0,0,.45)}
+  @media (prefers-reduced-motion:reduce){
+    .rugap{height:0}
+    .rideunder{position:static}
+    .rideover{margin-top:0;box-shadow:none}
+  }
+
+
+  /* the hero's 17vh top padding keeps growing on tall phones — hold it to a
+     steady ~40-56px below the fixed nav instead. */
+  @media (max-width:700px){.hero{padding-top:clamp(7.5rem,13vh,8.5rem)}}
+
+  /* ── touch sweep: comfortable hit areas on every link, phone and tablet ── */
+  @media (max-width:1024px){
+    .wm,.back,.nrow a,.cp a,a.mono,.meta dd a{display:inline-flex;align-items:center;min-height:44px}
+    .nrow a{align-items:flex-end}
+  }
+  /* nothing below 9px on a phone */
+  @media (max-width:700px){
+    .fs .n,.gateline span,.le,.st .tag{font-size:9px}
+  }
+</style>
+</head>
+<body>
+<div id="bar"></div>
+
+<nav><div class="cw navrow">
+  <a class="wm" href="../index.html"><span class="g">&#7864;</span>s&#7885;&#769;sa</a>
+  <a class="back" href="../index.html#work">&larr; All projects</a>
+</div></nav>
+
+<!-- ══════════ HERO ══════════ -->
+<header class="hero">
+  <div class="cw">
+    <p class="mono grey rv">Tragent &middot; Self-directed &middot; Travel</p>
+    <h1 class="display rv">From travel planning to<br><span class="em">travel decision making.</span></h1>
+    <p class="dek rv">Tragent gives travel agents one structured workspace for planning complex trips &mdash; visas, itineraries, suppliers and documents in a single place instead of scattered across tools.</p>
+    <dl class="meta rv">
+      <div><dt>Role</dt><dd>Product definition &amp; design</dd></div>
+      <div><dt>Type</dt><dd>Self-directed</dd></div>
+      <div><dt>Status</dt><dd>V1 built &middot; paused</dd></div>
+    </dl>
+  </div>
+
+  <div class="shot rv">
+    <div class="wide">
+      <img id="heroImg" src="tragent-images/hero.jpg" alt="The Tragent agent dashboard" width="2400" height="1710">
+    </div>
+  </div>
+</header>
+
+<!-- ══════════ THE PROBLEM ══════════ -->
+<section>
+  <div class="cw">
+    <p class="eyebrow rv">The problem</p>
+    <h2 class="rv">Agents don&rsquo;t struggle because planning is difficult.</h2>
+    <p class="lede rv">They struggle because a single trip lives in a dozen places at once &mdash; supplier threads, WhatsApp messages, embassy checklists, documents, spreadsheets and half a dozen booking sites.</p>
+    <p class="p rv" style="margin-top:1.4rem">Nothing about the work is unclear. <b>Nothing about it is in one place either.</b></p>
+  </div>
+</section>
+
+<!-- ══════════ RESEARCH ══════════ -->
+<div class="pstage" id="pstage" data-dark>
+  <div class="ppin">
+    <div class="cw">
+      <p class="eyebrow">Research</p>
+      <h2 style="color:var(--cream)">Three agents. Three different bottlenecks.</h2>
+      <p class="lede">Early discovery rather than a study. Three interviews, and the brainstorming that came out of them, are where the feature list came from &mdash; more than thirty items, and the shape underneath them.</p>
+
+      <div class="ptrack" id="ptrack" aria-hidden="true">
+        <span class="pd"></span><span class="pd"></span><span class="pd"></span>
+      </div>
+
+      <div class="pone" id="pone">
+        <div class="pk"><p class="who" id="pWho"></p><p class="role" id="pRole"></p></div>
+        <div class="pv"><p class="pos" id="pPos"></p><p class="det" id="pDet"></p><p class="bnl" id="pBn"></p></div>
+      </div>
+    </div>
+    <p class="hint">Keep scrolling</p>
+  </div>
+</div>
+
+<!-- ══════════ THE FINDING ══════════ -->
+<section>
+  <div class="cw">
+    <p class="eyebrow rv">The finding that reordered everything</p>
+    <h2 class="rv">Visa isn&rsquo;t a step in the process. It&rsquo;s the gate everything else waits on.</h2>
+
+    <div class="gsplit" style="margin-top:clamp(2rem,4vw,3rem)">
+      <div class="rv">
+        <p class="p">In the first draft, visa sat in a pre-trip bucket. Agent 02 described the opposite: it&rsquo;s checked first, because it decides whether the trip exists at all.</p>
+        <p class="p">So <b>planning runs beside it, not after it</b> &mdash; what waits at the gate is committing money. And approval always sits with a consular officer, so the product tracks readiness and never predicts.</p>
+      </div>
+
+      <div class="lanes rv" id="lanes" aria-label="Visa and planning run in parallel from the start. Planning waits at the approval gate before anything is booked.">
+        <div class="lane">
+          <p class="lk">Visa</p>
+          <div class="tr"><i class="dot dv"></i></div>
+          <p class="le">Approved</p>
+        </div>
+        <div class="lane">
+          <p class="lk">Planning</p>
+          <div class="tr"><i class="dot dp"></i></div>
+          <p class="le">Booked</p>
+        </div>
+        <div class="gateline"><span>Approval</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ THE WORKSPACE ══════════ -->
+<section class="dark" data-dark>
+  <div class="cw">
+    <p class="eyebrow rv">The product</p>
+    <h2 class="rv" style="color:var(--cream)">One workspace. Every trip.</h2>
+    <p class="lede rv">Instead of managing visas, itineraries, suppliers and documents separately, everything begins with creating a structured trip.</p>
+
+    <div class="vproto bleed rv">
+      <div class="vproto-hd"><span class="t">Prototype &middot; Creating a trip</span><span class="t live"><i></i>Looping</span></div>
+      <div class="vstage">
+        <video src="tragent-video/create-trip.mp4" poster="tragent-video/create-trip.jpg" loop muted playsinline preload="none" aria-label="Creating a trip in Tragent: from the agent home dashboard through trip creation to a suggested plan with visa options and a day-by-day itinerary."></video>
+      </div>
+      <p class="vcap">From the agent&rsquo;s home to a structured trip. <b>Everything that follows hangs off this object.</b></p>
+      </div>
+
+    <div class="sides bleed beatgap">
+      <div class="side own rv" style="border-color:var(--red-soft);background:rgba(224,139,99,.07)">
+        <p class="k" style="color:var(--red-soft)">Agents run the system</p>
+        <p style="color:rgba(255,253,240,.7)">Visas, itineraries, documents, payments, supplier coordination and the trip itself. They can also manage clients who never sign up.</p>
+      </div>
+      <div class="side rv" style="border-color:var(--hair-d)">
+        <p class="k" style="color:rgba(255,253,240,.4)">Travellers experience it</p>
+        <p style="color:rgba(255,253,240,.7)">Visa status, required actions, confirmations, a clear itinerary. They can upload documents and check in. They can&rsquo;t control the workflow &mdash; that&rsquo;s the point, not a limitation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PLANNING ══════════ -->
+<section class="clay">
+  <div class="cw">
+    <p class="eyebrow rv">Planning</p>
+    <h2 class="rv">Planning happens in context, not across tools.</h2>
+
+    <div class="vproto bleed rv">
+      <div class="vproto-hd"><span class="t">Prototype &middot; The planning workspace</span><span class="t live"><i></i>Looping</span></div>
+      <div class="vstage">
+        <video src="tragent-video/trip-workspace.mp4" poster="tragent-video/trip-workspace.jpg" loop muted playsinline preload="none" aria-label="A trip open in Tragent, moving between details, traveller information and the visa tab with its required documents."></video>
+      </div>
+      <p class="vcap">Details, visa, itinerary, flights and accommodation &mdash; <b>all inside one trip.</b></p>
+    </div>
+
+    <div class="flow f4 bleed rv" id="fPlan" aria-label="What planning covers inside a trip.">
+      <div class="fs"><p class="n">01</p><div><p class="v">Visa</p><p class="s">Requirements, documents, application status.</p></div></div>
+      <div class="fs"><p class="n">02</p><div><p class="v">Itinerary</p><p class="s">The day-by-day structure of the trip.</p></div></div>
+      <div class="fs"><p class="n">03</p><div><p class="v">Flights</p><p class="s">Sourced, quoted and confirmed against the trip.</p></div></div>
+      <div class="fs"><p class="n">04</p><div><p class="v">Accommodation</p><p class="s">Supplier and client status held separately.</p></div></div>
+    </div>
+    <p class="note bleed rv">The accommodation table filters to <b>Needs attention</b> first &mdash; an agent opening the product in the morning is asking what&rsquo;s stuck, not what exists.</p>
+
+    <p class="p rv beatgap" style="max-width:50ch">A supplier can be confirmed while the client is still deciding. Collapsing those into one status would lose the difference that matters, so client feedback runs as a second channel against the same accommodation.</p>
+
+    <div class="vproto bleed beatgap rv">
+      <div class="vproto-hd"><span class="t">Screen &middot; Itinerary, day by day</span></div>
+      <div class="vstage">
+        <img src="tragent-images/itinerary.png" width="2160" height="1536" alt="The planned itinerary for a seven-day trip in Tragent, laid out day by day, with each activity carrying a status such as in review, confirmed or client rejected, and some marked as having come from email." loading="lazy" decoding="async">
+      </div>
+      <p class="vcap">The structure an agent builds and confirms. <b>Every item carries where it came from and what it is still waiting on.</b></p>
+    </div>
+
+    <div class="vproto bleed rv">
+      <div class="vproto-hd"><span class="t">Screen &middot; A supplier, opened</span></div>
+      <div class="vstage">
+        <img src="tragent-images/suppliers.png" width="2160" height="1536" alt="A supplier panel open over the itinerary in Tragent, showing a quoted rate, a summary of the offer, and separate tabs for supplier communications and client feedback." loading="lazy" decoding="async">
+      </div>
+      <p class="vcap">Supplier comms and client feedback sit in the same panel, <b>as two tabs rather than one status.</b></p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ AI ══════════ -->
+<section>
+  <div class="cw">
+    <p class="eyebrow rv">AI</p>
+    <h2 class="rv">AI where it earns its place.</h2>
+    <p class="lede rv">Asked what he&rsquo;d hand to an extra team member, Agent 02 would delegate flight and hotel sourcing and <b style="color:var(--ink);font-weight:500">keep final visa review himself</b>. That drew the line.</p>
+
+    <div class="cards bleed rv">
+      <div class="cd">
+        <p class="k">Itinerary generation</p>
+        <p>A day-by-day plan in one pass, landing editable rather than finished.</p>
+      </div>
+      <div class="cd">
+        <p class="k">Recommendations</p>
+        <p>Suggested places the agent accepts, replaces or ignores.</p>
+      </div>
+      <div class="cd">
+        <p class="k">Planning assistance</p>
+        <p>Drafted supplier outreach the agent edits before it sends.</p>
+      </div>
+      <div class="cd">
+        <p class="k">Document support</p>
+        <p>A bank statement read for coherence, flagging where a document set disagrees with itself.</p>
+      </div>
+    </div>
+
+    <div class="vproto bleed rv">
+      <div class="vproto-hd"><span class="t">Prototype &middot; Suggested places</span><span class="t live"><i></i>Looping</span></div>
+      <div class="vstage">
+        <video src="tragent-video/suggested-places.mp4" poster="tragent-video/suggested-places.jpg" loop muted playsinline preload="none" aria-label="Choosing suggested places on the itinerary tab in Tragent, then adding them to the plan."></video>
+      </div>
+      <p class="vcap">Suggestions the agent accepts, replaces or ignores entirely. <b>Nothing lands in the itinerary without a decision.</b></p>
+      </div>
+
+    <p class="note bleed rv">The manual path stays fully available. <b>Nothing generated is final, and nothing is required.</b></p>
+  </div>
+</section>
+
+<!-- ══════════ AUTOMATION ══════════ -->
+<section class="dark" data-dark>
+  <div class="cw">
+    <p class="eyebrow rv">Automation</p>
+    <h2 class="rv" style="color:var(--cream)">Don&rsquo;t build a place they have to move to.</h2>
+    <p class="lede rv">Agent 01&rsquo;s coordination already lives in her inbox. Rebuilding that inside the product means asking her to switch &mdash; so every trip gets its own address instead.</p>
+
+    <div class="addr bleed rv">
+      <p class="k">Per-trip inbound address</p>
+      <p class="v">trip-7821-sarah-chen@bcc.tragent.io</p>
+    </div>
+
+    <div class="flow f4 bleed rv" id="fBcc" aria-label="How supplier email reaches a trip.">
+      <div class="fs"><p class="n">01</p><div><p class="v">Supplier email</p><p class="s">Sent from her own account, as always.</p></div></div>
+      <div class="fs"><p class="n">02</p><div><p class="v">BCC the trip</p><p class="s">One address, per trip.</p></div></div>
+      <div class="fs"><p class="n">03</p><div><p class="v">Tragent updates the trip</p><p class="s">The reply attaches to the supplier it came from.</p></div></div>
+      <div class="fs"><p class="n">04</p><div><p class="v">Agent notified</p><p class="s">Awaiting, responded, or unavailable.</p></div></div>
+    </div>
+    <p class="note bleed rv"><b>The system reads the inbox she&rsquo;s already using.</b></p>
+
+    <div class="vproto bleed beatgap rv">
+      <div class="vproto-hd"><span class="t">Screen &middot; Connecting an account</span></div>
+      <div class="vstage">
+        <img src="tragent-images/settings-integrations.png" width="1440" height="1024" alt="The integrations settings in Tragent: Gmail and Outlook available to connect, with custom SMTP and calendar sync shown but labelled coming soon." loading="lazy" decoding="async">
+      </div>
+      <p class="vcap">Connecting is optional. <b>Outreach still works unconnected, by pasting the body and the BCC into her own client.</b></p>
+    </div>
+
+    <div class="vproto bleed rv">
+      <div class="vproto-hd"><span class="t">Screen &middot; When a reply can&rsquo;t be placed</span></div>
+      <div class="vstage">
+        <img src="tragent-images/unmatched-emails.png" width="2160" height="1536" alt="The unmatched emails panel in Tragent, listing replies the pipeline could not place, each with a suggested destination and the option to assign it manually." loading="lazy" decoding="async">
+      </div>
+      <p class="vcap">A guess, and a way to overrule it. <b>The failure of the core mechanism gets a flow of its own.</b></p>
+    </div>
+
+    <div class="cards c3 bleed beatgap rv">
+      <div class="cd">
+        <p class="k">Unmatched emails</p>
+        <p>When a reply can&rsquo;t be placed, it surfaces with a guess and a manual override rather than disappearing.</p>
+      </div>
+      <div class="cd">
+        <p class="k">Nothing here yet</p>
+        <p>Every list has a designed zero state. A new agent&rsquo;s first trip is empty, and that&rsquo;s when a product is most likely to lose them.</p>
+      </div>
+      <div class="cd">
+        <p class="k">Not built yet</p>
+        <p>Custom SMTP and calendar sync are drawn and labelled coming soon &mdash; more honest than pretending to be finished.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SCOPE ══════════ -->
+<section class="clay">
+  <div class="cw">
+    <p class="eyebrow rv">Scope</p>
+    <h2 class="rv">Three stages. V1 is the first two.</h2>
+    <p class="lede rv">Building all three at once would have meant a shallow version of each, so V1 covers where an agent&rsquo;s time actually goes and stops before the part that only matters once trips are live.</p>
+
+    <div class="stages bleed">
+      <div class="st rv">
+        <p class="n">01</p><h3>Pre-trip</h3>
+        <p class="body">Visa requirements and guidance, document checklists and validation, client intake and profiling, feasibility.</p>
+        <p class="tag built">Built</p>
+      </div>
+      <div class="st rv">
+        <p class="n">02</p><h3>Trip planning</h3>
+        <p class="body">Itinerary as the core, flights and accommodation, supplier outreach and status tracking, client and document management.</p>
+        <p class="tag built">Built</p>
+      </div>
+      <div class="st off rv">
+        <p class="n">03</p><h3>Trip management</h3>
+        <p class="body">Live itinerary tracking, traveller check-ins, safety monitoring, incident and escalation handling.</p>
+        <p class="tag">Not built</p>
+      </div>
+    </div>
+    <p class="note bleed rv">Stage three isn&rsquo;t hypothetical &mdash; Agent 02 gave me two live incidents, including a traveller detained after unknowingly crossing a border without the right visa. <b>It needs designing after the planning system has met a real trip, not before.</b></p>
+  </div>
+</section>
+
+<!-- ══════════ WHERE IT STANDS ══════════ -->
+<section class="dark" data-dark>
+  <div class="cw">
+    <p class="eyebrow rv">Where it stands</p>
+    <h2 class="rv" style="color:var(--cream)">Designed, built, and paused.</h2>
+    <p class="lede rv">Designed and built across pre-trip and planning, but never yet in front of an agent. No adoption numbers, no impact claim.</p>
+
+    <div class="qs">
+      <div class="qr rv">
+        <p class="n">01</p>
+        <div><h3>Does the BCC pipeline hold at volume?</h3>
+        <p>Forwarded threads, edited subject lines, suppliers replying from a different address. The unmatched flow is a hypothesis about how often that happens, not a measurement.</p></div>
+      </div>
+      <div class="qr rv">
+        <p class="n">02</p>
+        <div><h3>How different are agents from each other?</h3>
+        <p>Three interviews, three bottlenecks. V1 serves the first two. Whether access is a later segment, a different product or the larger market is unresolved.</p></div>
+      </div>
+      <div class="qr rv">
+        <p class="n">03</p>
+        <div><h3>What is the upstream AI layer actually for?</h3>
+        <p>Drafting outreach, chasing non-responses, flagging a stale rate. All candidates, none decided &mdash; the answer comes from watching an agent work inside V1.</p></div>
+      </div>
+      <div class="qr rv">
+        <p class="n">04</p>
+        <div><h3>Could AI do the understanding, not just the drafting?</h3>
+        <p>Three directions explored upstream of planning: a request in the agent&rsquo;s own words, an assessment of what&rsquo;s missing before planning starts, a read on how ready a trip really is. <b>None of it shipped in V1.</b></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ LOOKING BACK ══════════ -->
+<section class="clay">
+  <div class="cw">
+    <p class="eyebrow rv" style="color:var(--grey)">Looking back</p>
+    <div class="two" style="align-items:center;margin-top:clamp(1rem,3vw,2rem)">
+      <div class="rv"><p class="pull">The lesson wasn&rsquo;t about AI. It was about <span style="color:var(--red)">sequencing</span>.</p></div>
+      <div class="rv">
+        <p class="p">The conversations produced a feature list. More than thirty items, and the list itself was roughly right. <b>What I had wrong was the order.</b></p>
+        <p class="p">Visa guidance sat as an early task in a linear flow. One agent describing his actual week turned it into the dependency the entire product hangs off.</p>
+        <p class="p">Once the trip existed as one structured object, every feature knew where it belonged. <b>Order is the part that decides whether a system fits the way someone already works.</b></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="next"><div class="cw">
+  <div class="nrow">
+    <a href="flux-v3.html">
+      <p class="display">Flux &#8599;</p>
+    </a>
+    <a class="mono" href="../index.html#work" style="color:rgba(255,253,240,.45);text-decoration:none;padding-bottom:.6rem">All work</a>
+  </div>
+  <div class="cp"><span>&copy; 2026 Esosa Etiosasere</span><a href="#" style="color:inherit">Back to top &uarr;</a></div>
+</div></div>
+
+<script>
+(function(){
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:.1,rootMargin:'0px 0px -6% 0px'});
+  document.querySelectorAll('.rv').forEach(function(el){io.observe(el);});
+
+  /* recorded prototypes — loop, but only while on screen.
+     no `autoplay` attribute on purpose: it overrides preload="none" and makes
+     the browser fetch every clip on page load. the observer starts them. */
+  var vids=[].slice.call(document.querySelectorAll('.vproto video'));
+  if(vids.length){
+    var vo=new IntersectionObserver(function(es){es.forEach(function(e){
+      var v=e.target;
+      if(e.isIntersecting){ if(v.preload==='none') v.preload='auto'; var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){}); }
+      else v.pause();
+    });},{threshold:.25});
+    vids.forEach(function(v){
+      if(reduced){ v.removeAttribute('autoplay'); v.controls=true; v.pause(); }
+      else vo.observe(v);
+    });
+  }
+
+  /* the visa/planning lanes only run while the figure is on screen */
+  var lanes=document.getElementById('lanes');
+  if(lanes) new IntersectionObserver(function(es){es.forEach(function(e){
+    e.target.classList.toggle('on', e.isIntersecting);
+  });},{threshold:.3}).observe(lanes);
+
+  /* each flow lights up left to right once it comes into view */
+  document.querySelectorAll('.flow').forEach(function(f){
+    if(reduced){ f.classList.add('on'); return; }
+    new IntersectionObserver(function(es,o){es.forEach(function(e){
+      if(!e.isIntersecting)return; o.unobserve(e.target); e.target.classList.add('on');
+    });},{threshold:.35}).observe(f);
+  });
+
+  /* research — the same week, told three ways, one at a time */
+  var VOICES=[
+    ['Agent 01','Established, accredited',
+     '“That’s usually where delays happen, especially if suppliers are slow to respond.”',
+     'Checks availability and pricing across her systems and partners, then revalidates before anything reaches the client.',
+     'Bottleneck · waiting on suppliers'],
+    ['Agent 02','Visa-led, 3–5 years',
+     '“Without a visa, no trip can happen.”',
+     'Checks visa requirements as soon as destinations are clear. Runs visa processing and planning in parallel, but avoids locking expensive bookings until approval lands.',
+     'Bottleneck · documentation, by a distance'],
+    ['Agent 03','Without accreditation',
+     '“You can’t just come from outside and not have a relationship with them.”',
+     'Books through industry relationships rather than direct access, and is working toward licensing.',
+     'Bottleneck · access itself']
+  ];
+  var pstage=document.getElementById('pstage'), pone=document.getElementById('pone'),
+      pWho=document.getElementById('pWho'), pRole=document.getElementById('pRole'),
+      pPos=document.getElementById('pPos'), pDet=document.getElementById('pDet'),
+      pBn=document.getElementById('pBn'),
+      pds=[].slice.call(document.querySelectorAll('#ptrack .pd')), pLast=-1, pTimer=null;
+  function paintVoice(i){
+    var v=VOICES[i]; if(!v||!pone) return;
+    var apply=function(){
+      pWho.textContent=v[0]; pRole.textContent=v[1];
+      pPos.textContent=v[2]; pDet.textContent=v[3]; pBn.textContent=v[4];
+      pds.forEach(function(d,n){d.classList.toggle('on',n<=i);});
+      requestAnimationFrame(function(){pone.classList.remove('swap');});
+    };
+    if(reduced||pLast<0){ apply(); return; }
+    pone.classList.add('swap'); clearTimeout(pTimer); pTimer=setTimeout(apply,320);
+  }
+  function voiceTick(){
+    if(!pstage||reduced) return;
+    var r=pstage.getBoundingClientRect(), h=pstage.offsetHeight-innerHeight;
+    var p=Math.min(1,Math.max(0,(-r.top)/h));
+    var i=Math.min(VOICES.length-1, Math.floor(p*VOICES.length));
+    if(i!==pLast){ paintVoice(i); pLast=i; }
+  }
+  /* no scroll choreography available — lay all three out instead */
+  if(reduced && pone){
+    pone.insertAdjacentHTML('afterend', VOICES.map(function(v){
+      return '<div class="pone"><div class="pk"><p class="who">'+v[0]+'</p><p class="role">'+v[1]+'</p></div>'+
+             '<div class="pv"><p class="pos">'+v[2]+'</p><p class="det">'+v[3]+'</p><p class="bnl">'+v[4]+'</p></div></div>';
+    }).join(''));
+    pone.remove(); pone=null;
+    pds.forEach(function(d){d.classList.add('on');});
+  } else { paintVoice(0); pLast=0; }
+
+  var bar=document.getElementById('bar'),
+      darks=[].slice.call(document.querySelectorAll('[data-dark]')),
+      heroImg=document.getElementById('heroImg');
+  addEventListener('scroll',function(){
+    voiceTick();
+    var h=document.body.scrollHeight-innerHeight;
+    bar.style.width=(h>0?(scrollY/h)*100:0)+'%';
+    document.body.classList.toggle('on-dark', darks.some(function(d){
+      var b=d.getBoundingClientRect(); return b.top<=70 && b.bottom>70;
+    }));
+    if(heroImg && !reduced){
+      var hb=heroImg.getBoundingClientRect();
+      if(hb.bottom>0 && hb.top<innerHeight) heroImg.style.transform='translateY('+(-scrollY*0.05)+'px)';
+    }
+  },{passive:true});
+
+  /* light -> dark seams: pin the outgoing block, let the dark one ride over it */
+  (function(){
+    var kids=[].slice.call(document.body.children), page=getComputedStyle(document.body).backgroundColor;
+    function isDark(el){
+      if(!el || el.nodeType!==1) return false;
+      /* the footer is exempt — it sits at the end of the page, it doesn't ride over anything */
+      if(el.classList.contains('next')) return false;
+      return el.hasAttribute('data-dark') || el.classList.contains('dark');
+    }
+    /* every block has to be opaque, or it shows whatever is pinned behind it */
+    kids.forEach(function(el){
+      if(!el.getClientRects().length || el.tagName==='SCRIPT' || el.tagName==='STYLE') return;
+      var bg=getComputedStyle(el).backgroundColor;
+      if(!bg || bg==='transparent' || /,\s*0\)$/.test(bg)) el.style.background=page;
+    });
+    kids.forEach(function(el,i){
+      if(!isDark(el) || !el.getClientRects().length) return;
+      var prev=kids[i-1];
+      if(!prev || isDark(prev) || !prev.getClientRects().length) return;
+      if(prev.tagName==='NAV' || prev.tagName==='SCRIPT' || prev.tagName==='STYLE') return;
+      if(getComputedStyle(prev).position==='fixed') return;
+      var wrap=document.createElement('div');
+      wrap.className='ru';
+      prev.parentNode.insertBefore(wrap,prev);
+      wrap.appendChild(prev);
+      wrap.appendChild(document.createElement('div')).className='rugap';
+      prev.classList.add('rideunder');
+      el.classList.add('rideover');
+    });
+    function sizeRides(){
+      [].slice.call(document.querySelectorAll('.rideunder')).forEach(function(s){
+        /* clamp to 0: when the block is SHORTER than the viewport this value
+           is positive, and a positive sticky top shoves the block down by that
+           much at the start of its range — which is what put a gap under the
+           nav on tall viewports. 0 means it simply pins at the top instead. */
+        s.style.top=Math.min(0, innerHeight - s.offsetHeight)+'px';
+      });
+    }
+    sizeRides();
+    addEventListener('resize',sizeRides,{passive:true});
+    addEventListener('load',sizeRides);
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(sizeRides);
+    /* paint order has to follow document order, or a rideover sits on top of
+       the non-positioned sections that come after it */
+    [].slice.call(document.body.children).forEach(function(el,i){
+      if(el.tagName==='SCRIPT' || el.tagName==='STYLE') return;
+      var cs=getComputedStyle(el);
+      if(cs.position==='fixed') return;
+      if(cs.position==='static') el.style.position='relative';
+      el.style.zIndex=String(i+1);
+    });
+  })();
+
+})();
+</script>
+</body>
+</html>
