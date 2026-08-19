@@ -21,7 +21,7 @@
 <style>
   :root{
     --cream:#FFFDF0; --cream-2:#F6F3E4; --ink:#191919; --body:#555047;
-    --red:#BC532F; --red-soft:#E08B63; --grey:#8F8F8F;
+    --red:#BC532F; --red-soft:#E08B63; --red-deep:#9E3F20; --grey:#8F8F8F;
     --hair:rgba(25,25,25,.14); --hair-d:rgba(255,253,240,.12); --paper:#FBF7E8;
     --f:'Geist',-apple-system,sans-serif; --m:'Geist Mono',ui-monospace,monospace;
     --s:'Instrument Serif',Georgia,serif;
@@ -31,6 +31,7 @@
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
   body{background:var(--cream);color:var(--ink);font-family:var(--f);font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
   ::selection{background:var(--red);color:#fff}
   /* height:auto is required — the hero <img> carries width/height attributes
@@ -73,9 +74,11 @@
   .note b{color:var(--red);font-weight:500} .dark .note b{color:var(--red-soft)}
   .beatgap{margin-top:clamp(3rem,7vw,5.5rem)}
   /* the transition line that hands one scene to the next */
+  /* the bridge between scenes. Muted on purpose: it sits directly under a .say
+     line, and two rust statements in a row give the eye no hierarchy. */
   .trans{font-family:var(--a);font-weight:500;font-size:clamp(1.2rem,2.3vw,1.6rem);line-height:1.35;letter-spacing:-.022em;
-    color:var(--red);max-width:28ch;margin-top:clamp(2.8rem,6vw,4.5rem);padding-top:1.7rem;border-top:1px solid var(--hair)}
-  .dark .trans{color:var(--red-soft);border-color:var(--hair-d)}
+    color:var(--body);max-width:28ch;margin-top:clamp(2.8rem,6vw,4.5rem);padding-top:1.7rem;border-top:1px solid var(--hair)}
+  .dark .trans{color:rgba(255,253,240,.62);border-color:var(--hair-d)}
   .sub{border-top:1px solid var(--hair);padding-top:clamp(1.6rem,3.5vw,2.4rem);margin-top:clamp(2.5rem,5vw,3.5rem)}
   .dark .sub{border-color:var(--hair-d)}
   .sub .k{font-family:var(--m);font-size:.5625rem;letter-spacing:.2em;text-transform:uppercase;color:var(--grey);margin-bottom:1rem}
@@ -104,26 +107,33 @@
     margin-top:auto;padding-top:1rem;border-top:1px solid var(--hair)}
   .dark .gate .f{color:rgba(255,253,240,.4);border-top-color:var(--hair-d)}
 
+  /* ── the money flow, redrawn from the working diagram ──
+     Structure kept, commercial terms deliberately withheld: this shows how one
+     payment fans out and what the patient is shown, not what anybody charges.
+     Smallest type here measures 6.91:1 on the panel ground. */
+  .flowdiag{margin-top:clamp(2.5rem,5vw,3.5rem);border:1px solid var(--hair-d);
+    background:#171717;padding:clamp(1.4rem,3.5vw,2.4rem)}
+  .fd-k{font-family:var(--m);font-size:.5625rem;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--red-soft);margin-bottom:.7rem}
+  /* the thesis leads; the three steps support it. They were within .05rem of
+     each other, which is why the eye had nowhere to land. */
+  .fd-open{font-family:var(--a);font-weight:500;font-size:clamp(1.25rem,2.3vw,1.65rem);
+    line-height:1.32;letter-spacing:-.022em;color:var(--cream);
+    max-width:34ch;margin-bottom:clamp(2rem,4vw,2.8rem)}
+  .fd-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:clamp(1.2rem,3vw,2.6rem);margin-bottom:clamp(2rem,4vw,2.8rem);
+    padding-top:clamp(1.4rem,3vw,2rem);border-top:1px solid var(--hair-d)}
+  @media (max-width:760px){.fd-steps{grid-template-columns:1fr;gap:1.4rem}}
+  .fd-steps .n{font-family:var(--m);font-size:.5rem;letter-spacing:.2em;color:var(--red-soft);margin-bottom:.5rem}
+  .fd-steps p{font-size:.825rem;line-height:1.6;color:rgba(255,253,240,.66);max-width:30ch}
+  .fd-fig{margin:0}
+  .fd-fig img{width:100%;height:auto;border:1px solid var(--hair-d);background:#0D0D0D}
+
   /* ── the financial rules a session carries ── */
   .rulegrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4rem;margin-top:1.4rem}
   @media (max-width:520px){.rulegrid{grid-template-columns:1fr}}
   .rulegrid span{border:1px solid var(--hair-d);padding:.85rem .9rem;font-family:var(--m);font-size:.5625rem;
     letter-spacing:.14em;text-transform:uppercase;color:rgba(255,253,240,.7)}
-
-  /* ── what happens to a note after the room empties ── */
-  .afterline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(.8rem,2vw,1.4rem);
-    margin-top:clamp(2rem,4vw,3rem);padding-top:1.6rem;position:relative}
-  @media (max-width:860px){.afterline{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  @media (max-width:460px){.afterline{grid-template-columns:1fr}}
-  .afterline::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:var(--hair)}
-  .al{position:relative;padding-top:1.4rem;opacity:0;transform:translateY(10px);
-    transition:opacity .6s ease,transform .6s ease}
-  .afterline.on .al{opacity:1;transform:none}
-  .afterline.on .al:nth-child(2){transition-delay:.12s} .afterline.on .al:nth-child(3){transition-delay:.24s}
-  .afterline.on .al:nth-child(4){transition-delay:.36s}
-  .al::before{content:"";position:absolute;top:-4px;left:0;width:7px;height:7px;background:var(--red);transform:rotate(45deg)}
-  .al .t{font-family:var(--m);font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--red)}
-  .al .v{font-size:clamp(.95rem,1.7vw,1.05rem);line-height:1.4;color:var(--body);margin-top:.7rem;max-width:none}
 
   /* Headings run 4px below the base scale on this page; the hero h1 is exempt. */
   /* ── hero ── */
@@ -140,6 +150,41 @@
   .meta{display:flex;flex-wrap:wrap;gap:2.4rem;margin-top:clamp(2.5rem,5vw,3.5rem)}
   .meta dt{font-family:var(--m);font-size:.625rem;letter-spacing:.18em;text-transform:uppercase;color:var(--grey);margin-bottom:.35rem}
   .meta dd{font-size:.85rem}
+  /* ── THE RESULT ──────────────────────────────────────────────────────────
+     A room of its own, on the only ground used nowhere else on the page, so it
+     reads as a reveal rather than another block inside Scene 4. One dominant
+     figure carries the eye; the other three are deliberately secondary.
+     Every value here clears WCAG AA on the rust ground: cream 6.45:1,
+     cream at .85 → 5.11:1. Nothing drops below .85. */
+  .result{background:var(--red-deep);color:var(--cream);
+    padding-block:clamp(5.5rem,12vw,9rem);position:relative;overflow:hidden}
+  /* fine diagonal hatch — the texture of security paper, which is what this
+     section is about. Held at .05: on the lit stripes the smallest type still
+     measures 4.70:1 against the ground, so the pattern never costs contrast. */
+  .result::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background-image:repeating-linear-gradient(45deg,
+      rgba(255,253,240,.05) 0 1px, transparent 1px 10px)}
+  .result .cw{position:relative;z-index:1}
+  .reyebrow{font-family:var(--m);font-size:.625rem;letter-spacing:.26em;text-transform:uppercase;
+    color:rgba(255,253,240,.85);margin-bottom:clamp(2.5rem,5vw,3.5rem)}
+  .result .lead .v{font-family:var(--d);font-weight:400;text-transform:uppercase;
+    font-size:clamp(4.5rem,14vw,10.5rem);line-height:.88;letter-spacing:-.012em;color:var(--cream)}
+  .result .lead .k{font-family:var(--f);font-size:clamp(1rem,2.2vw,1.35rem);line-height:1.4;
+    letter-spacing:-.01em;color:var(--cream);max-width:22ch;margin-top:clamp(1.2rem,2.5vw,1.7rem)}
+  .figs{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(1.5rem,4vw,3rem);
+    margin-top:clamp(3rem,6vw,4.5rem);padding-top:clamp(2rem,4vw,2.8rem);
+    border-top:1px solid rgba(255,253,240,.28)}
+  .figs .v{font-family:var(--f);font-weight:500;font-size:clamp(1.5rem,3.2vw,2.15rem);
+    line-height:1;letter-spacing:-.03em;color:var(--cream)}
+  .figs .k{font-family:var(--m);font-size:.5625rem;letter-spacing:.16em;text-transform:uppercase;
+    line-height:1.8;color:rgba(255,253,240,.85);margin-top:.8rem}
+  .result .src{font-family:var(--m);font-size:.5625rem;letter-spacing:.14em;text-transform:uppercase;
+    color:rgba(255,253,240,.85);margin-top:clamp(2rem,4vw,2.6rem)}
+  .rclose{font-family:var(--a);font-weight:500;font-size:clamp(1.25rem,2.4vw,1.7rem);
+    line-height:1.35;letter-spacing:-.02em;color:var(--cream);max-width:30ch;
+    margin-top:clamp(3rem,6vw,4.5rem);padding-top:clamp(1.8rem,3.5vw,2.4rem);
+    border-top:1px solid rgba(255,253,240,.28)}
+  @media(max-width:640px){.figs{grid-template-columns:1fr;gap:1.75rem}}
   /* hero image band — copy above, image rises underneath on scroll */
   .shot{margin-top:clamp(3rem,6vw,4.5rem);background:#111;padding:clamp(2rem,5vw,4.5rem) 0;overflow:hidden}
   .shot img{border:1px solid var(--hair-d);will-change:transform}
@@ -208,7 +253,7 @@
   }
 
   /* ── SCENE 4 · the freeze frame ── */
-  .freeze{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem;align-items:stretch}
+  .freeze{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem;align-items:stretch}
   @media (max-width:720px){.freeze{grid-template-columns:1fr}}
   .fz{border:1px solid var(--hair-d);background:#171717;padding:clamp(1.1rem,2.6vw,1.6rem);min-height:11rem;
     display:flex;flex-direction:column;justify-content:space-between;opacity:.28;transition:opacity .7s ease,border-color .7s ease}
@@ -275,6 +320,20 @@
   /* the hero's 17vh top padding keeps growing on tall phones — hold it to a
      steady ~40-56px below the fixed nav instead. */
   @media (max-width:700px){.hero{padding-top:clamp(7.5rem,13vh,8.5rem)}}
+  /* ── hero, narrow viewports ──
+     .meta wrapped as flex with one 2.4rem gap on both axes, so items of very
+     different widths produced ragged rows. A grid aligns them into columns.
+     The h1 <br>s are placed for a wide column and re-wrap badly on a phone. */
+  @media (max-width:640px){
+    .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(8.5rem,1fr));
+      gap:1.5rem 1.25rem;margin-top:clamp(2rem,7vw,2.6rem)}
+    .hero h1{margin-top:1rem}
+    /* the kicker wraps to two or three lines of wide-tracked uppercase on a
+       phone and crowds the headline — hidden here, hero only */
+    .hero .mono{display:none}
+    .hero .dek{margin-top:1.25rem}
+  }
+
 
   /* ── touch sweep: comfortable hit areas on every link, phone and tablet ── */
   @media (max-width:1024px){
@@ -283,7 +342,7 @@
   }
   /* nothing below 9px on a phone */
   @media (max-width:700px){
-    .fz .k,.fz .tagline,.gate .n,.gate .f,.al .t{font-size:9px}
+    .fz .k,.fz .tagline,.gate .n,.gate .f{font-size:9px}
   }
 </style>
 </head>
@@ -296,13 +355,14 @@
 </div></nav>
 
 <!-- ══════════ HERO ══════════ -->
-<header class="hero">
+<header class="hero" id="top">
   <div class="cw">
     <p class="mono grey rv">CarePlan 365 &middot; Mental healthcare &middot; Australia &middot; 2024&ndash;present</p>
     <h1 class="display rv">Fragmented care to<br><span class="em">one connected workspace</span></h1>
-    <p class="dek rv">A platform connecting booking, care, documentation and billing into one continuous patient journey.</p>
+    <p class="dek rv">CarePlan 365 is an Australian mental healthcare platform connecting booking, care, documentation and billing into one continuous workflow.</p>
     <dl class="meta rv">
-      <div><dt>Role</dt><dd>Product Designer</dd></div>
+      <div><dt>Role</dt><dd>Product Designer &middot; sole design owner</dd></div>
+      <div><dt>Team</dt><dd>With product &amp; engineering</dd></div>
       <div><dt>Scope</dt><dd>End-to-end &middot; Web</dd></div>
       <div><dt>Users</dt><dd>GPs &middot; Psychologists &middot; ADHD coaches</dd></div>
     </dl>
@@ -365,17 +425,7 @@
       </div>
     </div>
 
-    <div class="two beatgap">
-      <div class="rv">
-        <p class="p">Every therapy session quietly moves through three invisible stages.</p>
-        <p class="p">Before the session can happen, someone has to make it possible.</p>
-        <p class="p">During the session, clinicians need the right information at the right time.</p>
-      </div>
-      <div class="rv">
-        <p class="p">After the session, providers need to document care and get paid correctly.</p>
-        <p class="p">This wasn&rsquo;t a collection of features. <b>It was the operating model behind one therapy session.</b></p>
-      </div>
-    </div>
+    <p class="lede rv beatgap" style="color:rgba(255,253,240,.7);text-align:center;margin-inline:auto">This wasn&rsquo;t a collection of features. <b style="color:var(--cream);font-weight:500">It was the operating model behind one therapy session.</b></p>
 
     <p class="trans rv">It all begins before the therapist ever enters the room.</p>
   </div>
@@ -394,16 +444,7 @@
     </div>
     <p class="note bleed rv">Four answers. <b>Resolve them and the session can exist; miss one and it can&rsquo;t.</b></p>
 
-    <div class="two beatgap">
-      <div class="rv">
-        <p class="p">At first, these decisions existed in different parts of the product.</p>
-        <p class="p">As CarePlan evolved, we brought them together into one appointment model.</p>
-      </div>
-      <div class="rv">
-        <p class="p">Instead of treating the appointment as a calendar event, we treated it as the source of truth for everything that followed.</p>
-        <p class="p">Once an appointment was created, every downstream workflow already understood its context.</p>
-      </div>
-    </div>
+    <p class="p rv beatgap" style="max-width:56ch">These four decisions lived in different parts of the product. Pulling them into a single appointment model turned the appointment from a calendar event into <b>the source of truth for everything that followed</b>&mdash;so every downstream workflow already understood its context.</p>
 
     <div class="vproto bleed beatgap rv">
       <div class="vproto-hd"><span class="t">Prototype &middot; Setting availability</span><span class="t live"><i></i>Looping</span></div>
@@ -434,17 +475,15 @@
 
     <div class="freeze bleed beatgap" id="freeze" aria-label="A provider ends a session, then leaves CarePlan to invoice elsewhere.">
       <div class="fz"><p class="k">01</p><p class="v">Provider clicks <b>End Session</b>.</p><p class="tagline">Inside CarePlan</p></div>
-      <div class="fz"><p class="k">02</p><p class="v">The interface pauses.</p><p class="tagline">Nothing follows</p></div>
-      <div class="fz out"><p class="k">03</p><p class="v">The provider leaves CarePlan and generates the invoice somewhere else.</p><p class="tagline">Freeze frame</p></div>
+      <div class="fz out"><p class="k">02</p><p class="v">Nothing follows. The provider leaves CarePlan and generates the invoice somewhere else.</p><p class="tagline">Freeze frame</p></div>
     </div>
 
     <div class="two beatgap">
       <div class="rv">
-        <p class="p">Providers completed care inside CarePlan, then left the platform to generate invoices elsewhere.</p>
         <p class="p">That wasn&rsquo;t just inconvenient. <b>It exposed a gap in how we understood Australian healthcare billing.</b></p>
+        <p class="p">Every session carried financial rules that affected everything downstream.</p>
       </div>
       <div class="rv">
-        <p class="p">As we worked with providers, we discovered that every session carried financial rules that affected everything downstream.</p>
         <div class="rulegrid">
           <span>Private billing</span><span>Bulk billing</span><span>Gap fees</span>
           <span>GST</span><span>Authorised payments</span><span>Refunds</span>
@@ -453,6 +492,20 @@
     </div>
 
     <p class="say rv beatgap">The invoice wasn&rsquo;t the difficult part. Representing the logic behind it was.</p>
+
+    <div class="flowdiag bleed rv">
+      <p class="fd-k">Working diagram</p>
+      <p class="fd-open">Bringing billing inside the product meant mapping the whole path first.</p>
+      <div class="fd-steps">
+        <div><p class="n">01</p><p>The tax invoice belongs to the provider. CarePlan issues and sends it on their behalf.</p></div>
+        <div><p class="n">02</p><p>The patient pays inside the product. The payment provider takes its fee in transit; the rest reaches the provider.</p></div>
+        <div><p class="n">03</p><p>Afterwards the patient can find the session, the receipt and the tax invoice in the same place.</p></div>
+      </div>
+      <figure class="fd-fig">
+        <img src="careplan-images/pin-payments-working-diagram.png" width="2030" height="1745" loading="lazy" decoding="async"
+             alt="Working diagram from a call with the payment processor. Stage one: a provider invoice passes through CarePlan to the patient, with a note that CarePlan sends the tax invoice on the provider's behalf, pointing to the billing screen where that invoice is built. Stage two: the patient's payment reaches CarePlan and divides between the provider and the processor, with the fee breakdown redacted, a question about whether the processor can be told not to send its own receipt, and a margin note that Uber Eats issues two invoices. Stage three: four phone screens tracing a patient from Billings and Claims to a provider tax invoice showing the consultation total required for Medicare, and a separate fees screen.">
+      </figure>
+    </div>
 
     <div class="vproto bleed beatgap rv">
       <div class="vproto-hd"><span class="t">Prototype &middot; Billing states</span><span class="t live"><i></i>Looping</span></div>
@@ -464,9 +517,9 @@
 
     <div class="two beatgap">
       <div class="rv">
-        <p class="p">One of the biggest changes we made was moving payment selection into the appointment itself.</p>
+        <p class="p">The change I argued for was moving payment selection out of billing and into the appointment itself.</p>
         <p class="p"><b>An appointment could no longer exist without a billing pathway.</b></p>
-        <p class="p">Instead of billing reacting to the session, the session carried the information billing needed from the beginning.</p>
+        <p class="p">It meant more decisions at booking&mdash;the part of the flow nobody wants to make heavier. I took that cost, because the alternative was billing guessing at context it never had.</p>
       </div>
       <div class="rv">
         <p class="p">Getting that right took multiple product and engineering iterations.</p>
@@ -492,7 +545,28 @@
       <p class="vcap">A claim isn&rsquo;t paid or unpaid. <b>It sits in a state Medicare controls, and the product has to represent every one of them.</b></p>
     </div>
 
-    <p class="trans rv">Once the session carried billing context&hellip; everything else became easier to coordinate.</p>
+    <p class="say rv beatgap">Providers stopped leaving at the end of a session, because there was no longer anywhere else to go.</p>
+  </div>
+</section>
+
+<!-- ══════════ THE RESULT ══════════
+     Its own ground, its own section. The billing engine is the only part of
+     this story with production numbers behind it, so the numbers get a room
+     rather than a paragraph — and the closing line carries the story onward. -->
+<section class="result" data-dark>
+  <div class="cw">
+    <p class="reyebrow rv">What it added up to</p>
+    <div class="lead rv">
+      <p class="v">$2.5M</p>
+      <p class="k">AUD invoiced through the billing engine</p>
+    </div>
+    <div class="figs rv">
+      <div><p class="v">9,200+</p><p class="k">sessions billed</p></div>
+      <div><p class="v">1,430</p><p class="k">patients</p></div>
+      <div><p class="v">20</p><p class="k">months live, no gaps</p></div>
+    </div>
+    <p class="src rv">In production since January 2025 &middot; Sole designer on the billing engine, with product and engineering</p>
+    <p class="rclose rv">Once the session carried billing context, everything else became easier to coordinate.</p>
   </div>
 </section>
 
@@ -500,13 +574,7 @@
 <section class="clay stagevh">
   <div class="cw">
     <h2 class="rv">While care is happening.</h2>
-    <p class="lede rv">Therapy doesn&rsquo;t end when the conversation ends.</p>
-    <div class="afterline bleed rv" id="afterline">
-      <div class="al"><p class="t">In the room</p><p class="v">Clinicians revisit sessions.</p></div>
-      <div class="al"><p class="t">Hours later</p><p class="v">They remember details later.</p></div>
-      <div class="al"><p class="t">Days later</p><p class="v">They refine observations.</p></div>
-      <div class="al"><p class="t">Next time</p><p class="v">They prepare for the next appointment.</p></div>
-    </div>
+    <p class="lede rv">Therapy doesn&rsquo;t end when the conversation ends. Clinicians remember details hours later and refine observations days later, so notes stopped being something to complete and became a <b>living clinical record</b>&mdash;returned to, added to, never overwritten.</p>
 
     <div class="vproto bleed beatgap rv">
       <div class="vproto-hd"><span class="t">Prototype &middot; Notes on a patient record</span><span class="t live"><i></i>Looping</span></div>
@@ -516,38 +584,10 @@
       <p class="vcap">Every note is dated, attributed and marked when it has been edited. <b>A note isn&rsquo;t a document you finish. It&rsquo;s a record you keep adding to.</b></p>
     </div>
 
-    <div class="two beatgap">
-      <div class="rv">
-        <p class="p">We redesigned documentation to reflect that reality.</p>
-        <p class="p">Instead of treating notes as something that had to be completed immediately, we made them part of a <b>living clinical record</b>.</p>
-      </div>
-      <div class="rv">
-        <p class="p">Providers could return to previous sessions, add observations, and build on earlier context without losing the original record.</p>
-        <p class="p">Documentation stopped being an administrative task. <b>It became part of continuity of care.</b></p>
-      </div>
-    </div>
-
     <p class="trans rv">Individually, these workflows solved different problems. Together, they became one connected platform.</p>
   </div>
 </section>
 
-
-
-<section class="dark" data-dark>
-  <div class="cw">
-    <div class="two">
-      <div class="rv">
-        <p class="p">By the end of the redesign, CarePlan no longer felt like a collection of healthcare features.</p>
-        <p class="p">Every workflow revolved around the same question:</p>
-        <p class="say" style="margin-top:1.4rem">What does this therapy session need next?</p>
-      </div>
-      <div class="rv">
-        <p class="p">That question shaped how appointments were created, how clinicians documented care, how providers got paid and how patients returned for future sessions.</p>
-        <p class="p">The product became simpler&mdash;not because healthcare became simpler, but because <b>the software finally reflected the way care actually works.</b></p>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- ══════════ REFLECTION ══════════ -->
 <section class="clay">
@@ -558,6 +598,7 @@
       <div class="rv">
         <p class="p">When I joined CarePlan, I thought I was designing healthcare software.</p>
         <p class="p">Looking back, I think I was designing something quieter. <b>The invisible systems that allow one therapy session to feel effortless.</b></p>
+        <p class="p">The figure I keep returning to isn&rsquo;t the revenue. Across those sessions it works out at <b>roughly six billed sessions per patient</b>&mdash;therapy is a course of care, not a transaction, and six sessions is the system holding a relationship together across months.</p>
         <p class="p">When the underlying model reflects the real world, the interface can finally disappear&mdash;and clinicians can focus on the people they&rsquo;re there to help.</p>
       </div>
     </div>
@@ -571,7 +612,7 @@
     </a>
     <a class="mono" href="../index.html#work" style="color:rgba(255,253,240,.45);text-decoration:none;padding-bottom:.6rem">All work</a>
   </div>
-  <div class="cp"><span>&copy; 2026 Esosa Etiosasere</span><a href="#" style="color:inherit">Back to top &uarr;</a></div>
+  <div class="cp"><span>&copy; 2026 Esosa Etiosasere</span><a href="#top" style="color:inherit">Back to top &uarr;</a></div>
 </div></div>
 
 <script>
@@ -592,7 +633,7 @@
   }
 
   /* the gates and the after-the-session line land in sequence */
-  ['gates','afterline'].forEach(function(id){
+  ['gates'].forEach(function(id){
     var el=document.getElementById(id); if(!el) return;
     if(reduced){ el.classList.add('on'); return; }
     new IntersectionObserver(function(es,o){es.forEach(function(e){
