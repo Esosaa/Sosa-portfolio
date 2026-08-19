@@ -31,6 +31,7 @@
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
   body{background:var(--cream);color:var(--ink);font-family:var(--f);font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
   ::selection{background:var(--red);color:#fff}
   img{max-width:100%;display:block}
@@ -102,8 +103,6 @@
   .tk .r{display:flex;justify-content:space-between;padding:.08rem 0}
   .tk .q{font-family:var(--f);font-weight:600;font-size:.75rem;margin-top:.25rem}
   /* ── CH1 · the machinery, turning ── */
-  .cogsplit{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.8fr);gap:clamp(2rem,6vw,5rem);align-items:center}
-  @media (max-width:860px){.cogsplit{grid-template-columns:1fr;gap:2.5rem}}
   .cogwrap{display:flex;align-items:center;justify-content:center}
   .cogs{width:min(340px,72vw);height:auto;overflow:visible}
   .cg path{fill:none;stroke:rgba(255,253,240,.22);stroke-width:1.5;vector-effect:non-scaling-stroke}
@@ -236,6 +235,27 @@
   }
 
   /* ── CH4 · copy on the left, the merge on the right ── */
+  .cogsplit{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.8fr);gap:clamp(2rem,6vw,5rem);align-items:center}
+  @media (max-width:860px){.cogsplit{grid-template-columns:1fr;gap:2.5rem}}
+  .czoom{margin-top:clamp(2.5rem,5vw,3.5rem)}
+  .czoom-lede .p{max-width:52ch}
+  .ramps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(1.5rem,4vw,3rem);
+    margin-top:clamp(1.75rem,3.5vw,2.5rem)}
+  @media (max-width:680px){.ramps{grid-template-columns:1fr;gap:2rem}}
+  .rt{font-family:var(--m);font-size:.5625rem;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--grey);margin-bottom:.9rem}
+  .rrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,8.5rem);gap:.85rem;
+    align-items:center;margin-bottom:.3rem}
+  .sw{height:2.6rem;border-radius:4px;display:flex;align-items:center;gap:.3rem;padding:0 .4rem}
+  .pill{font-family:var(--m);font-size:.5rem;letter-spacing:.04em;line-height:1;
+    padding:.28rem .38rem;border-radius:20px;white-space:nowrap}
+  .pill.dark{background:rgba(0,0,0,.82);color:#fff}
+  .pill.lite{background:rgba(255,255,255,.92);color:#111}
+  .rmeta{display:flex;flex-direction:column;gap:.1rem;min-width:0}
+  .rn{font-size:.75rem;color:var(--ink)}
+  .rh{font-family:var(--m);font-size:.5625rem;letter-spacing:.06em;color:var(--grey)}
+  .czoom-k{font-family:var(--m);font-size:.5625rem;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--red);margin-bottom:.9rem}
   .mergesplit{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.95fr);gap:clamp(2rem,5vw,4rem);align-items:center}
   @media (max-width:900px){.mergesplit{grid-template-columns:1fr;gap:2.5rem}}
   /* tighter fan than the full-width version — the column is half as wide */
@@ -282,9 +302,15 @@
   .rstage.tagged .rtags b{opacity:1;transform:none}
   .rtags b:nth-child(2){transition-delay:.12s} .rtags b:nth-child(3){transition-delay:.24s} .rtags b:nth-child(4){transition-delay:.36s}
   @media (max-width:760px){.rtags{display:none}}
-  .prob{border-top:1px solid var(--hair-d);padding:clamp(2.5rem,5vw,3.5rem) 0}
-  .prob-hd{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(2rem,5vw,4rem);align-items:start}
-  @media (max-width:820px){.prob-hd{grid-template-columns:1fr;gap:1.1rem}}
+  .prob{border-top:1px solid var(--hair-d);padding:clamp(3.5rem,7vw,5.5rem) 0}
+  .prob-hd{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.95fr);gap:clamp(2.5rem,6vw,5rem);align-items:start}
+  /* the left column carries an eyebrow above its heading, so an unadjusted
+     right column aligns its first line to the eyebrow instead of the h3 */
+  .prob-hd > .p{padding-top:1.6rem}
+  @media (max-width:820px){.prob-hd{grid-template-columns:1fr;gap:1.1rem}
+    .prob-hd > .p{padding-top:0}}
+  /* the prototype needs air after the header, not just after its sibling */
+  .prob .prob-hd + .vproto{margin-top:clamp(2.2rem,4.5vw,3.4rem)}
   .prob-hd .q{font-family:var(--m);font-size:.625rem;letter-spacing:.16em;text-transform:uppercase;color:var(--red-soft);margin-bottom:.7rem}
   .prob-hd h3{font-size:clamp(1.2rem,2.3vw,1.6rem);color:var(--cream);max-width:22ch}
   /* recorded prototypes — always a dark stage so the recording's own bezel disappears,
@@ -374,6 +400,20 @@
   /* the hero's 17vh top padding keeps growing on tall phones — hold it to a
      steady ~40-56px below the fixed nav instead. */
   @media (max-width:700px){.hero{padding-top:clamp(7.5rem,13vh,8.5rem)}}
+  /* ── hero, narrow viewports ──
+     .meta wrapped as flex with one 2.4rem gap on both axes, so items of very
+     different widths produced ragged rows. A grid aligns them into columns.
+     The h1 <br>s are placed for a wide column and re-wrap badly on a phone. */
+  @media (max-width:640px){
+    .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(8.5rem,1fr));
+      gap:1.5rem 1.25rem;margin-top:clamp(2rem,7vw,2.6rem)}
+    .hero h1{margin-top:1rem}
+    /* the kicker wraps to two or three lines of wide-tracked uppercase on a
+       phone and crowds the headline — hidden here, hero only */
+    .hero .mono{display:none}
+    .hero .dek{margin-top:1.25rem}
+  }
+
 
   /* ── touch sweep: comfortable hit areas on every link, phone and tablet ── */
   @media (max-width:1024px){
@@ -395,7 +435,7 @@
 </div></nav>
 
 <!-- ══════════ HERO — the product is the hook ══════════ -->
-<header class="hero">
+<header class="hero" id="top">
   <div class="cw">
     <p class="mono grey rv">Inventory-backed lending &middot; Nigeria &middot; 2023&ndash;26</p>
     <h1 class="display rv">Flux</h1>
@@ -552,7 +592,7 @@
     <div class="mergesplit" style="margin-top:clamp(2rem,4vw,3rem)">
       <div class="rv">
         <p class="p">Authorities to Collect. Warehouse Receipts. Collection Documents. Different names, different formats, <b>identical underlying concept</b>: permission to take a specific quantity of goods somebody else has already paid for.</p>
-        <p class="p">We could design around every company&rsquo;s vocabulary, or we could model the thing underneath all of it.</p>
+        <p class="p">I could design around every company&rsquo;s vocabulary, or model the thing underneath all of it.</p>
         <p class="p"><b>The Product Receipt was that abstraction</b>, one object carrying ownership, movement, financing and collection, whatever the business happened to call it.</p>
       </div>
       <div class="merge side rv" id="merge" aria-label="Three differently-named paper documents resolve into one digital Product Receipt.">
@@ -574,18 +614,120 @@
       <div class="rv">
         <h2>Casian</h2>
         <p class="p" style="margin-top:1rem">A platform serving three organisations with different operating models can&rsquo;t be assembled screen by screen. Before the product, I built the system it would be made of.</p>
+        <p class="p">It is also what makes the next chapter possible. An approval flow can only be configured per organisation if the interface is assembled from parts, rather than drawn screen by screen.</p>
       </div>
       <div class="rv">
-        <p class="p">Reusable components, documented interaction patterns and shared standards. It is what kept designers and engineers aligned as the workflows got heavier.</p>
+        <p class="p">Components are specified across their whole lifecycle, not just their resting state. The file upload has four&mdash;including failure, with a way back.</p>
+        <p class="p">Engineers pulled the tokens straight out of Figma&rsquo;s dev mode. <b>Over 100 screens were built from it.</b></p>
         <div class="tokens">
           <span>Components</span><span>Interaction patterns</span><span>Data visualisation</span><span>States &amp; feedback</span><span>Documentation</span>
         </div>
       </div>
     </div>
     <figure class="rv" style="margin-top:clamp(2.5rem,5vw,3.5rem)">
-      <img src="flux-images/casian-design-system.png" alt="The Casian design system" style="border:1px solid var(--hair)">
+      <img src="flux-images/casian-design-system.png" alt="The Casian design system: colour ramps, alert components, data visualisation, upload states, form controls, a type scale and a shadow scale" style="border:1px solid var(--hair)">
       <figcaption class="cap">Casian. The foundation every configuration in the next chapter is assembled from.</figcaption>
     </figure>
+
+    <div class="czoom rv">
+      <div class="czoom-lede">
+        <p class="czoom-k">Detail &middot; colour tokens</p>
+        <p class="p">Every step of both ramps carries <b>two contrast readings</b>&mdash;one against black text, one against white&mdash;each rated to a WCAG level.</p>
+        <p class="p">Credit officers sit in this interface all day. Deciding legibility at the token layer meant no screen built afterwards could quietly fail it.</p>
+      </div>
+    <div class="ramps rv">
+      <div class="rcol">
+        <p class="rt">Blue</p>
+        <div class="rrow">
+          <div class="sw" style="background:#ecf2fe"><span class="pill dark">18.70 AAA</span><span class="pill lite">1.12 &mdash;</span></div>
+          <div class="rmeta"><span class="rn">blue-50</span><span class="rh">#ecf2fe</span></div>
+        </div>
+        <div class="rrow">
+          <div class="sw" style="background:#c3d7fd"><span class="pill dark">14.46 AAA</span><span class="pill lite">1.45 &mdash;</span></div>
+          <div class="rmeta"><span class="rn">blue-100</span><span class="rh">#c3d7fd</span></div>
+        </div>
+        <div class="rrow">
+          <div class="sw" style="background:#a6c3fc"><span class="pill dark">11.83 AAA</span><span class="pill lite">1.77 &mdash;</span></div>
+          <div class="rmeta"><span class="rn">blue-200</span><span class="rh">#a6c3fc</span></div>
+        </div>
+        <div class="rrow">
+          <div class="sw" style="background:#7ea8fa"><span class="pill dark">8.87 AAA</span><span class="pill lite">2.37 &mdash;</span></div>
+          <div class="rmeta"><span class="rn">blue-300</span><span class="rh">#7ea8fa</span></div>
+        </div>
+        <div class="rrow">
+          <div class="sw" style="background:#6597f9"><span class="pill dark">7.35 AAA</span><span class="pill lite">2.86 &mdash;</span></div>
+          <div class="rmeta"><span class="rn">blue-400</span><span class="rh">#6597f9</span></div>
+        </div>
+        <div class="rrow">
+          <div class="sw" style="background:#3e7df8"><span class="pill dark">5.49 AA</span><span class="pill lite">3.82 AA L</span></div>
+          <div class="rmeta"><span class="rn">blue-500</span><span class="rh">#3e7df8</span></div>
+        </div>
+        <div class="rrow">
+          <div class="sw" style="background:#3872e2"><span class="pill dark">4.67 AA</span><span class="pill lite">4.49 AA L</span></div>
+          <div class="rmeta"><span class="rn">blue-600</span><span class="rh">#3872e2</span></div>
+        </div>
+        <div class="rrow">
+          <div class="sw" style="background:#2c59b0"><span class="pill dark">3.16 AA L</span><span class="pill lite">6.64 AA</span></div>
+          <div class="rmeta"><span class="rn">blue-700</span><span class="rh">#2c59b0</span></div>
+        </div>
+        <div class="rrow">
+          <div class="sw" style="background:#224588"><span class="pill dark">2.27 &mdash;</span><span class="pill lite">9.23 AAA</span></div>
+          <div class="rmeta"><span class="rn">blue-800</span><span class="rh">#224588</span></div>
+        </div>
+        <div class="rrow">
+          <div class="sw" style="background:#1a3568"><span class="pill dark">1.75 &mdash;</span><span class="pill lite">11.98 AAA</span></div>
+          <div class="rmeta"><span class="rn">blue-900</span><span class="rh">#1a3568</span></div>
+        </div>
+      </div>
+      <div class="rcol">
+        <p class="rt">Grey</p>
+        <div class="rrow">
+          <div class="sw" style="background:#fbfbfc"><span class="pill dark">20.31 AAA</span><span class="pill lite">1.03 &mdash;</span></div>
+          <div class="rmeta"><span class="rn">grey-25</span><span class="rh">#fbfbfc</span></div>
+        </div>
+        <div class="rrow">
+          <div class="sw" style="background:#f5f6f7"><span class="pill dark">19.41 AAA</span><span class="pill lite">1.08 &mdash;</span></div>
+          <div class="rmeta"><span class="rn">grey-50</span><span class="rh">#f5f6f7</span></div>
+        </div>
+        <div class="rrow">
+          <div class="sw" style="background:#f2f4f7"><span class="pill dark">19.06 AAA</span><span class="pill lite">1.10 &mdash;</span></div>
+          <div class="rmeta"><span class="rn">grey-100</span><span class="rh">#f2f4f7</span></div>
+        </div>
+        <div class="rrow">
+          <div class="sw" style="background:#eaecf0"><span class="pill dark">17.75 AAA</span><span class="pill lite">1.18 &mdash;</span></div>
+          <div class="rmeta"><span class="rn">grey-200</span><span class="rh">#eaecf0</span></div>
+        </div>
+        <div class="rrow">
+          <div class="sw" style="background:#d0d5dd"><span class="pill dark">14.24 AAA</span><span class="pill lite">1.47 &mdash;</span></div>
+          <div class="rmeta"><span class="rn">grey-300</span><span class="rh">#d0d5dd</span></div>
+        </div>
+        <div class="rrow">
+          <div class="sw" style="background:#98a2b3"><span class="pill dark">8.15 AAA</span><span class="pill lite">2.58 &mdash;</span></div>
+          <div class="rmeta"><span class="rn">grey-400</span><span class="rh">#98a2b3</span></div>
+        </div>
+        <div class="rrow">
+          <div class="sw" style="background:#667085"><span class="pill dark">4.22 AA L</span><span class="pill lite">4.97 AA</span></div>
+          <div class="rmeta"><span class="rn">grey-500</span><span class="rh">#667085</span></div>
+        </div>
+        <div class="rrow">
+          <div class="sw" style="background:#475467"><span class="pill dark">2.73 &mdash;</span><span class="pill lite">7.69 AAA</span></div>
+          <div class="rmeta"><span class="rn">grey-600</span><span class="rh">#475467</span></div>
+        </div>
+        <div class="rrow">
+          <div class="sw" style="background:#344054"><span class="pill dark">2.01 &mdash;</span><span class="pill lite">10.46 AAA</span></div>
+          <div class="rmeta"><span class="rn">grey-700</span><span class="rh">#344054</span></div>
+        </div>
+        <div class="rrow">
+          <div class="sw" style="background:#1d2939"><span class="pill dark">1.43 &mdash;</span><span class="pill lite">14.70 AAA</span></div>
+          <div class="rmeta"><span class="rn">grey-800</span><span class="rh">#1d2939</span></div>
+        </div>
+        <div class="rrow">
+          <div class="sw" style="background:#101828"><span class="pill dark">1.18 &mdash;</span><span class="pill lite">17.75 AAA</span></div>
+          <div class="rmeta"><span class="rn">grey-900</span><span class="rh">#101828</span></div>
+        </div>
+      </div>
+    </div>
+    </div>
   </div>
 </section>
 
@@ -626,7 +768,6 @@
       <div class="prob-hd rv">
         <div><p class="q">Problem 01</p><h3>No two organisations approve the same way.</h3></div>
         <p class="p">A credit officer at one bank can release a receipt alone. At another it needs three signatures in sequence. Hard-code either and you lock out the other.</p>
-        <p class="p">So we built the workflow feature to cater to any organisation&rsquo;s process. Approval flows can be customised based on organisation preferences.</p>
       </div>
       <div class="vproto rv">
         <div class="vproto-hd"><span class="t">Prototype &middot; Building the workflow</span><span class="t live"><i></i>Looping</span></div>
@@ -647,7 +788,7 @@
     <div class="prob">
       <div class="prob-hd rv">
         <div><p class="q">Problem 02</p><h3>Everyone works from one record. Nobody may see all of it.</h3></div>
-        <p class="p">Banks need control over who inside their own organisation can see what. So access is gated by role: every user is assigned roles, and each role carries its own set of permissions, down to the individual and the department.</p>
+        <p class="p">Banks need control over who inside their own organisation can see what. So access is gated by role, scoped down to the individual and the department.</p>
       </div>
       <div class="vproto rv">
         <div class="vproto-hd"><span class="t">Prototype &middot; Roles &amp; permissions</span><span class="t live"><i></i>Looping</span></div>
@@ -752,14 +893,28 @@
   </div>
 </section>
 
+<!-- ══════════ WHAT CHANGED ══════════
+     Deliberately the same treatment as "What that cost" in CH2 — same figures,
+     inverted. The paper journeys were the cost; removing them is the result. -->
+<section class="cost dark" data-dark>
+  <div class="cw cost-in">
+    <p class="mono ch rv" style="margin-bottom:clamp(2rem,5vh,3.5rem)">What changed</p>
+    <div class="figs">
+      <div class="fig rv"><p class="v">2<span> of 3</span></p><p class="k">journeys removed<br>from every pickup</p></div>
+      <div class="fig rv"><p class="v">0</p><p class="k">trips to collect<br>paper receipts</p></div>
+      <div class="fig rv"><p class="v">1</p><p class="k">journey left &mdash; the only one<br>that ever moved product</p></div>
+    </div>
+    <p class="say rv" style="margin-top:clamp(3rem,7vh,5rem);color:var(--red-soft)">The wait stopped being a function of how far anyone had to drive.</p>
+  </div>
+</section>
+
 <!-- ══════════ CH10 · THE PIVOT ══════════ -->
 <section>
   <div class="cw">
     <p class="mono ch rv">Chapter 10 &middot; The pivot</p>
-    <h2 class="rv">We filled a board with every feature, grouped them by purpose, and found something we didn&rsquo;t expect.</h2>
+    <h2 class="rv">I filled a board with every feature and grouped them by purpose. What surfaced wasn&rsquo;t what we expected.</h2>
     <div class="two" style="margin-top:clamp(2rem,4vw,3rem)">
       <div class="rv">
-        <p class="p">Not by screens. Not by releases. <b>By purpose.</b></p>
         <p class="p">Very little of what we&rsquo;d built was actually about lending. The Product Receipt was recording movement. Analytics were revealing operational behaviour. Workflows were coordinating organisations.</p>
       </div>
       <div class="rv">
@@ -803,7 +958,6 @@
         <p class="p">At the beginning of this project, I thought I was designing software for inventory financing. That was only the entry point.</p>
         <p class="p">The harder challenge wasn&rsquo;t designing dashboards. It was understanding the system well enough to simplify it without losing the rules that made it work.</p>
         <p class="p">The Product Receipt wasn&rsquo;t valuable because it was digital. <b>It was valuable because it gave every stakeholder a shared representation of the same business object.</b></p>
-        <p class="p">When you model the business correctly, the software has a much easier job of making sense.</p>
       </div>
     </div>
   </div>
@@ -816,7 +970,7 @@
     </a>
     <a class="mono" href="../index.html#work" style="color:rgba(255,253,240,.45);text-decoration:none;padding-bottom:.6rem">All work</a>
   </div>
-  <div class="cp"><span>&copy; 2026 Esosa Etiosasere</span><a href="#" style="color:inherit">Back to top &uarr;</a></div>
+  <div class="cp"><span>&copy; 2026 Esosa Etiosasere</span><a href="#top" style="color:inherit">Back to top &uarr;</a></div>
 </div></div>
 <script>
 (function(){
