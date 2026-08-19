@@ -44,6 +44,8 @@
     --colgrid-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='136' height='18'%3E%3Cline x1='0.5' y1='0' x2='0.5' y2='10' stroke='%23FFFDF0' stroke-opacity='0.22'/%3E%3C/svg%3E");
   }
   *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
   body{
     margin:0;background:var(--cream);color:var(--ink);
     font-family:var(--f-sans);font-size:1rem;line-height:1.65;
@@ -330,7 +332,7 @@
 
 <nav>
   <div class="col navrow">
-    <a class="wordmark" href="#">Sosa</a>
+    <a class="wordmark" href="/">Sosa</a>
     <div class="navlinks">
       <a href="#about">About</a>
       <a href="#work">Work</a>
@@ -340,7 +342,7 @@
 </nav>
 
 <!-- ============ HERO ============ -->
-<div class="hero ruled">
+<div class="hero ruled" id="top">
   <div class="col manifesto">
     <p class="mono kicker">Ẹsọ́sa &middot; Lagos, Nigeria</p>
     <!-- one line per span so they can rise in turn; the newlines between them
@@ -552,7 +554,7 @@
       </div>
       <div class="copyline">
         <span>&copy; 2026 Esosa Etiosasere</span>
-        <a href="#">Back to top &uarr;</a>
+        <a href="#top">Back to top &uarr;</a>
       </div>
     </div>
   </footer>

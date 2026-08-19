@@ -31,6 +31,7 @@
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
   body{background:var(--cream);color:var(--ink);font-family:var(--f);font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
   ::selection{background:var(--red);color:#fff}
   img{max-width:100%;height:auto;display:block}
@@ -308,6 +309,20 @@
   /* the hero's 17vh top padding keeps growing on tall phones — hold it to a
      steady ~40-56px below the fixed nav instead. */
   @media (max-width:700px){.hero{padding-top:clamp(7.5rem,13vh,8.5rem)}}
+  /* ── hero, narrow viewports ──
+     .meta wrapped as flex with one 2.4rem gap on both axes, so items of very
+     different widths produced ragged rows. A grid aligns them into columns.
+     The h1 <br>s are placed for a wide column and re-wrap badly on a phone. */
+  @media (max-width:640px){
+    .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(8.5rem,1fr));
+      gap:1.5rem 1.25rem;margin-top:clamp(2rem,7vw,2.6rem)}
+    .hero h1{margin-top:1rem}
+    /* the kicker wraps to two or three lines of wide-tracked uppercase on a
+       phone and crowds the headline — hidden here, hero only */
+    .hero .mono{display:none}
+    .hero .dek{margin-top:1.25rem}
+  }
+
 
   /* ── touch sweep: comfortable hit areas on every link, phone and tablet ── */
   @media (max-width:1024px){
@@ -329,7 +344,7 @@
 </div></nav>
 
 <!-- ══════════ HERO ══════════ -->
-<header class="hero">
+<header class="hero" id="top">
   <div class="cw">
     <p class="mono grey rv">Tragent &middot; Self-directed &middot; Travel</p>
     <h1 class="display rv">From travel planning to<br><span class="em">travel decision making.</span></h1>
@@ -651,7 +666,7 @@
     </a>
     <a class="mono" href="../index.html#work" style="color:rgba(255,253,240,.45);text-decoration:none;padding-bottom:.6rem">All work</a>
   </div>
-  <div class="cp"><span>&copy; 2026 Esosa Etiosasere</span><a href="#" style="color:inherit">Back to top &uarr;</a></div>
+  <div class="cp"><span>&copy; 2026 Esosa Etiosasere</span><a href="#top" style="color:inherit">Back to top &uarr;</a></div>
 </div></div>
 
 <script>
